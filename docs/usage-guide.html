@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Usage Guide — LoRaLink Docs</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">›</span>Usage Guide</div>
+    <h1>📖 Usage Guide</h1>
+    <p>A task-oriented walkthrough of every LoRaLink feature. Each section is self-contained — jump to what you need.</p>
+
+    <h2>Device Setup</h2>
+    <h3>Naming Your Device</h3>
+    <p>Set a friendly name (1-14 characters) that identifies the node on the mesh:</p>
+    <pre><code>SETNAME FarmNode1</code></pre>
+
+    <h3>Configuring WiFi</h3>
+    <pre><code>SETWIFI MyNetwork MyPassword
+SETIP 192.168.1.100    # Static IP
+SETIP OFF              # DHCP</code></pre>
+    <!-- TODO: Expand with troubleshooting tips for WiFi persistence -->
+
+    <h2>Communication Modes</h2>
+    <table>
+      <thead><tr><th>Interface</th><th>Range</th><th>Speed</th><th>Best For</th></tr></thead>
+      <tbody>
+        <tr><td>LoRa</td><td>1–10 km</td><td>Low</td><td>Long-range mesh, telemetry</td></tr>
+        <tr><td>ESP-NOW</td><td>~200 m</td><td>High</td><td>Fast peer-to-peer, battery-efficient</td></tr>
+        <tr><td>BLE</td><td>~30 m</td><td>Medium</td><td>Phone/tablet control</td></tr>
+        <tr><td>WiFi/HTTP</td><td>LAN</td><td>High</td><td>Web dashboard, REST API, OTA</td></tr>
+        <tr><td>Serial</td><td>Wired</td><td>High</td><td>Debug, local automation</td></tr>
+        <tr><td>MQTT</td><td>Internet</td><td>High</td><td>Cloud, Home Assistant, Node-RED</td></tr>
+      </tbody>
+    </table>
+    <!-- TODO: Add dedicated subsections for each interface with setup steps -->
+
+    <h2>Sending Commands</h2>
+    <p>Commands follow the syntax: <code>[TARGET] COMMAND [ARGS]</code></p>
+    <pre><code># Local commands
+LED ON
+GPIO 5 1
+STATUS
+
+# Targeted commands
+FarmNode2 LED ON
+FarmNode2 STATUS
+
+# Broadcast to all nodes
+ALL STATUS
+ALL GPIO 5 0</code></pre>
+    <!-- TODO: Expand with more complex command examples -->
+
+    <h2>Relay &amp; GPIO Control</h2>
+    <p>LoRaLink supports 4 GPIO-controlled relay outputs. Relays default to LOW on boot for safety.</p>
+    <table>
+      <thead><tr><th>Relay</th><th>GPIO Pin</th><th>Voltage</th></tr></thead>
+      <tbody>
+        <tr><td>Relay 1</td><td>5</td><td>110V AC</td></tr>
+        <tr><td>Relay 2</td><td>46</td><td>12V DC</td></tr>
+        <tr><td>Relay 3</td><td>6</td><td>12V DC</td></tr>
+        <tr><td>Relay 4</td><td>7</td><td>12V DC</td></tr>
+      </tbody>
+    </table>
+    <!-- TODO: Add wiring diagrams and safety notes -->
+
+    <h2>Scheduling &amp; Automation</h2>
+    <p>Create scheduled GPIO tasks with Toggle, Pulse, and PWM modes via the web dashboard or JSON commands.</p>
+    <pre><code>SETSCHED 5000        # Toggle 110V relay every 5 seconds
+GETSCHED             # View current schedule as JSON</code></pre>
+    <!-- TODO: Expand with web UI scheduling walkthrough -->
+
+    <h2>Web Dashboard</h2>
+    <p>The LoRaLink web UI provides tabbed access to all functionality:</p>
+    <ul>
+      <li><strong>Fleet</strong> — Live node roster, field monitor, topology graph</li>
+      <li><strong>Hardware</strong> — Network configuration, node registry, BLE scanning</li>
+      <li><strong>Admin</strong> — Config files, golden image backup, protocol verification</li>
+      <li><strong>Swarm</strong> — MQTT dashboard with real-time telemetry and broadcast commands</li>
+    </ul>
+    <!-- TODO: Add screenshots of each tab -->
+
+    <h2>MQTT &amp; Swarm Dashboard</h2>
+    <p>Connect your nodes to an MQTT broker for cloud telemetry and remote control:</p>
+    <pre><code>CONFIG SET MQTT_SRV 192.168.1.100
+CONFIG SET MQTT_PRT 1883
+CONFIG SET MQTT_EN true</code></pre>
+    <p>The Swarm Dashboard at <code>/static/mqtt_dashboard.html</code> provides a real-time grid of all MQTT-connected nodes.</p>
+    <!-- TODO: Expand with Home Assistant / Node-RED integration -->
+
+    <h2>Configuration Management</h2>
+    <ul>
+      <li><strong>NVS Persistence</strong> — All settings survive power cycles</li>
+      <li><strong>Export/Import</strong> — JSON-based config backup and restore</li>
+      <li><strong>Factory Reset</strong> — <code>WIPECONFIG</code> to erase all settings</li>
+    </ul>
+    <!-- TODO: Expand with golden image and config sync details -->
+
+    <h2>OTA Firmware Updates</h2>
+    <p>Push firmware over WiFi using ArduinoOTA. No physical access required once WiFi is configured.</p>
+    <!-- TODO: Add OTA setup steps -->
+
+    <h2>Security</h2>
+    <ul>
+      <li><strong>AES-128</strong> — All LoRa traffic encrypted with configurable key</li>
+      <li><strong>Sync Word</strong> — Private <code>0x12</code> isolates your mesh from public LoRa</li>
+      <li><strong>Checksum</strong> — Rejects corrupted and noise packets at hardware layer</li>
+    </ul>
+    <!-- TODO: Expand with crypto key management guide -->
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

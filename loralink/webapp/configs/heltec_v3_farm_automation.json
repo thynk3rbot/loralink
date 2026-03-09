@@ -1,0 +1,69 @@
+{
+  "schema": "1.0",
+  "hardware_id": "Heltec ESP32 LoRa V3",
+  "settings": {
+    "dev_name": "master",
+    "wifi_ssid": "spw1-5g",
+    "wifi_pass": "OPTMyxlpyx99!",
+    "static_ip": "",
+    "gateway": "",
+    "subnet": "",
+    "repeater": true,
+    "mqtt_en": true,
+    "mqtt_srv": "mqtt.example.com",
+    "mqtt_prt": 1883,
+    "mqtt_usr": "farm_gateway",
+    "mqtt_pwd": "mqtt_secure_pass",
+    "espnow_en": true,
+    "wifi_en": true,
+    "ble_en": true,
+    "crypto_key": "f0e1d2c3b4a5968778695a4b3c2d1e0f"
+  },
+  "pins": {
+    "35": {
+      "name": "SystemLED",
+      "en": true
+    },
+    "6": {
+      "name": "IrrigationPump",
+      "en": true
+    },
+    "7": {
+      "name": "GrowLight",
+      "en": true
+    },
+    "5": {
+      "name": "Heater",
+      "en": true
+    },
+    "15": {
+      "name": "DHT_Sensor",
+      "en": true
+    },
+    "36": {
+      "name": "PowerRail",
+      "en": true
+    },
+    "1": {
+      "name": "SoilMoisture",
+      "en": true
+    }
+  },
+  "_comments": {
+    "purpose": "Realistic farm/greenhouse automation deployment config",
+    "scenario": "Multi-crop greenhouse with automated irrigation, lighting, and climate control",
+    "network": "Static IP, WiFi enabled for remote monitoring, MQTT for cloud telemetry",
+    "redundancy": "Repeater enabled for long-range, ESP-NOW for direct sensor communication",
+    "safety": "Dangerous operations (irrigation pump, heater) are disabled by default in task schedules",
+    "pins": {
+      "SystemLED": "Heartbeat indicator",
+      "IrrigationPump": "Main water distribution relay",
+      "GrowLight": "LED lighting array control",
+      "Heater": "Climate control heater",
+      "DHT_Sensor": "Temperature/humidity monitoring",
+      "PowerRail": "Sensor power distribution (VEXT)",
+      "SoilMoisture": "Soil moisture ADC input"
+    },
+    "credentials": "NOTE: Replace wifi_ssid, wifi_pass, mqtt_srv, mqtt_usr, mqtt_pwd with production values"
+  }
+}

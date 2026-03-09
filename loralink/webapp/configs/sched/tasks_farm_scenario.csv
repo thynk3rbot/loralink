@@ -1,0 +1,6 @@
+Name,Type,Pin,Interval,Duration,Enabled
+IrrigationCycle,PULSE,IrrigationPump,86400,1800,1
+SystemHeartbeat,TOGGLE,LED,10,0,1
+GrowhouseHeating,TOGGLE,Heater,300,0,0
+NightLighting,TOGGLE,GrowLight,3600,0,0
+SensorPowerCycle,PULSE,VEXT,600,2,0

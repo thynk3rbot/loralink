@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoRaLink — Product Builder</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #0f1117;
+    --surface: #1a1d27;
+    --panel:   #1e2130;
+    --border:  #2a2f44;
+    --accent:  #5b8dee;
+    --green:   #3ecf8e;
+    --yellow:  #f5a623;
+    --red:     #e05252;
+    --text:    #e2e8f0;
+    --muted:   #6b7280;
+    --radius:  8px;
+  }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 13px; min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+  body.debug-ids [data-debug-id]::after {
+    content: attr(data-debug-id); position: absolute; top: -1px; right: -1px;
+    background: #e91e6388; color: #fff; font: 600 9px/1 monospace;
+    padding: 1px 3px; border-radius: 2px; pointer-events: none; z-index: 9999; white-space: nowrap;
+  }
+  body.debug-ids [data-debug-id] { position: relative; }
+
+  /* Header */
+  .hdr {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 8px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .hdr-title { font-weight: 700; font-size: 15px; color: var(--accent); white-space: nowrap; }
+  .hdr-title span { color: var(--muted); font-weight: 400; }
+  .badge {
+    padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;
+    background: #2a2f44; color: var(--muted); border: 1px solid var(--border);
+  }
+  .badge.ok   { background: #1a3a2a; color: var(--green); border-color: #2a5a3a; }
+  .badge.warn { background: #3a2a1a; color: var(--yellow); border-color: #5a3a1a; }
+  .hdr-nav { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .nav-link {
+    color: var(--muted); font-size: 12px; text-decoration: none;
+    padding: 3px 8px; border-radius: 4px; border: 1px solid transparent; transition: all .15s;
+  }
+  .nav-link:hover { color: var(--text); border-color: var(--border); }
+  .nav-link.active { color: var(--accent); border-color: var(--accent); }
+  .debug-toggle {
+    cursor: pointer; user-select: none; font-size: 11px; color: var(--muted);
+    padding: 3px 8px; border: 1px solid var(--border); border-radius: 4px;
+    background: transparent; transition: all .15s;
+  }
+  .debug-toggle:hover { color: var(--text); border-color: var(--accent); }
+
+  /* Layout */
+  .main {
+    flex: 1; display: grid; grid-template-columns: 280px 1fr;
+    overflow: hidden; min-height: 0;
+  }
+  .sidebar {
+    background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .content { overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* Sidebar */
+  .sb-section { padding: 12px; border-bottom: 1px solid var(--border); }
+  .sb-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--muted); margin-bottom: 8px;
+  }
+  .product-list { display: flex; flex-direction: column; gap: 4px; }
+  .product-item {
+    padding: 8px 10px; border-radius: var(--radius); cursor: pointer;
+    border: 1px solid transparent; transition: all .15s;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .product-item:hover { background: #252840; border-color: var(--border); }
+  .product-item.active { background: #1a2a4a; border-color: var(--accent); }
+  .pi-name { font-weight: 600; font-size: 12px; }
+  .pi-ver  { font-size: 10px; color: var(--muted); }
+
+  /* Buttons */
+  .btn {
+    border: none; border-radius: 6px; cursor: pointer; font-size: 12px;
+    font-weight: 600; padding: 6px 12px; transition: all .15s; color: var(--text);
+  }
+  .btn-primary  { background: var(--accent); color: #fff; }
+  .btn-primary:hover  { filter: brightness(1.15); }
+  .btn-success  { background: var(--green); color: #0a1a0f; }
+  .btn-success:hover  { filter: brightness(1.1); }
+  .btn-danger   { background: var(--red); color: #fff; }
+  .btn-danger:hover   { filter: brightness(1.1); }
+  .btn-ghost    { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+  .btn-sm { padding: 4px 8px; font-size: 11px; }
+  .btn-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+  /* Cards */
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .card-hdr {
+    padding: 10px 14px; background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 12px;
+    text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
+  }
+  .card-body { padding: 14px; }
+
+  /* Forms */
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .form-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field.full { grid-column: 1 / -1; }
+  label { font-size: 11px; color: var(--muted); font-weight: 600; }
+  input[type="text"], input[type="number"], input[type="password"], select {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 5px;
+    color: var(--text); font-size: 12px; padding: 6px 9px; outline: none;
+    transition: border-color .15s; width: 100%; font-family: inherit;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  input.err { border-color: var(--red); }
+  .input-hint { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* Toggles */
+  .toggles-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+  .toggle-item { display: flex; align-items: center; gap: 6px; }
+  .toggle-item label { font-size: 12px; color: var(--text); cursor: pointer; margin: 0; }
+  input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--accent); cursor: pointer; }
+
+  /* Pin table */
+  .pin-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .pin-table th {
+    text-align: left; color: var(--muted); font-size: 10px;
+    text-transform: uppercase; letter-spacing: .06em;
+    padding: 4px 8px; border-bottom: 1px solid var(--border);
+  }
+  .pin-table td { padding: 4px 6px; }
+  .pin-table tr:hover td { background: #22263a; }
+  .pin-table input[type="number"],
+  .pin-table input[type="text"] { padding: 3px 6px; font-size: 11px; }
+  .pin-warn { color: var(--red); font-size: 10px; font-weight: 700; }
+
+  /* Schedule table */
+  .sched-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .sched-table th {
+    text-align: left; color: var(--muted); font-size: 10px;
+    text-transform: uppercase; letter-spacing: .06em;
+    padding: 4px 6px; border-bottom: 1px solid var(--border);
+  }
+  .sched-table td { padding: 3px 4px; }
+  .sched-table tr:hover td { background: #22263a; }
+  .sched-table input, .sched-table select { padding: 2px 5px; font-size: 11px; }
+  .sched-crit { accent-color: var(--red) !important; }
+  .slot-count { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+
+  /* Status bar */
+  .statusbar {
+    background: var(--surface); border-top: 1px solid var(--border);
+    padding: 6px 14px; display: flex; align-items: center; gap: 12px;
+    font-size: 11px; color: var(--muted); min-height: 30px; flex-wrap: wrap;
+  }
+  .status-msg { flex: 1; }
+  .status-msg.ok   { color: var(--green); }
+  .status-msg.warn { color: var(--yellow); }
+  .status-msg.err  { color: var(--red); }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+  /* Deploy result */
+  .deploy-result {
+    margin-top: 10px; padding: 8px 12px; border-radius: 6px;
+    font-size: 12px; display: none; white-space: pre-wrap; font-family: monospace;
+  }
+  .deploy-result.ok   { background: #1a3a2a; border: 1px solid #2a5a3a; color: var(--green); }
+  .deploy-result.err  { background: #3a1a1a; border: 1px solid #5a2a2a; color: var(--red); }
+
+  @media (max-width: 700px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<header class="hdr" data-debug-id="PB-HDR">
+  <div class="hdr-title" data-debug-id="PB-HDR-TITLE">
+    LoRaLink <span>/ Product Builder</span>
+  </div>
+  <span class="badge" id="pb-save-badge" data-debug-id="PB-HDR-BADGE">unsaved</span>
+  <nav class="hdr-nav" data-debug-id="PB-HDR-NAV">
+    <a class="nav-link" href="/"                 data-debug-id="PB-NAV-FLEET">Fleet Admin</a>
+    <a class="nav-link active" href="/product-builder" data-debug-id="PB-NAV-BUILDER">Product Builder</a>
+    <a class="nav-link" href="/devqa"             data-debug-id="PB-NAV-DEVQA">Dev / QA</a>
+    <button class="debug-toggle" onclick="document.body.classList.toggle('debug-ids')"
+            data-debug-id="PB-NAV-DEBUG">⬡ IDs</button>
+  </nav>
+</header>
+
+<div class="main" data-debug-id="PB-MAIN">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" data-debug-id="PB-SIDEBAR">
+    <div class="sb-section" data-debug-id="PB-PROD-LIST-SECT">
+      <div class="sb-label" data-debug-id="PB-PROD-LABEL">Products</div>
+      <div class="product-list" id="pb-product-list" data-debug-id="PB-PROD-LIST"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="newProduct()"   data-debug-id="PB-BTN-NEW">+ New</button>
+        <button class="btn btn-ghost btn-sm"   onclick="loadProducts()" data-debug-id="PB-BTN-REFRESH">↺ Refresh</button>
+      </div>
+    </div>
+
+    <div class="sb-section" data-debug-id="PB-IMPORT-SECT">
+      <div class="sb-label" data-debug-id="PB-IMPORT-LABEL">Import from Device</div>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:8px;">Pull running config from connected device.</p>
+      <button class="btn btn-ghost btn-sm" onclick="importFromDevice()" data-debug-id="PB-BTN-IMPORT">⬇ Pull Device Config</button>
+    </div>
+
+    <div class="sb-section" data-debug-id="PB-ACTIONS-SECT">
+      <div class="sb-label" data-debug-id="PB-ACTIONS-LABEL">Actions</div>
+      <div class="btn-row">
+        <button class="btn btn-success btn-sm" onclick="saveProduct()"   data-debug-id="PB-BTN-SAVE">💾 Save</button>
+        <button class="btn btn-danger btn-sm"  onclick="deleteProduct()" data-debug-id="PB-BTN-DELETE">🗑 Delete</button>
+      </div>
+    </div>
+
+    <div class="sb-section" data-debug-id="PB-DEPLOY-SECT">
+      <div class="sb-label" data-debug-id="PB-DEPLOY-LABEL">Deploy to Device</div>
+      <div class="field">
+        <label data-debug-id="PB-DEPLOY-TRANSPORT-LBL">Transport</label>
+        <select id="pb-transport" data-debug-id="PB-DEPLOY-TRANSPORT">
+          <option value="http">HTTP</option>
+          <option value="ble">BLE</option>
+        </select>
+      </div>
+      <div class="btn-row" style="margin-top:10px;">
+        <button class="btn btn-primary btn-sm" onclick="deployProduct()" data-debug-id="PB-BTN-DEPLOY">🚀 Deploy</button>
+      </div>
+      <div class="deploy-result" id="pb-deploy-result" data-debug-id="PB-DEPLOY-RESULT"></div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <div class="content" data-debug-id="PB-CONTENT">
+
+    <!-- Product identity -->
+    <div class="card" data-debug-id="PB-META-CARD">
+      <div class="card-hdr" data-debug-id="PB-META-HDR">📦 Product Identity</div>
+      <div class="card-body" data-debug-id="PB-META-BODY">
+        <div class="form-grid cols-3">
+          <div class="field">
+            <label data-debug-id="PB-META-NAME-LBL">Product Name</label>
+            <input type="text" id="pb-name" placeholder="e.g. Industrial Relay v2"
+                   data-debug-id="PB-META-NAME" oninput="markDirty()">
+          </div>
+          <div class="field">
+            <label data-debug-id="PB-META-VER-LBL">Version</label>
+            <input type="text" id="pb-version" placeholder="1.0"
+                   data-debug-id="PB-META-VERSION" oninput="markDirty()">
+          </div>
+          <div class="field">
+            <label data-debug-id="PB-META-HW-LBL">Hardware</label>
+            <select id="pb-hw" data-debug-id="PB-META-HW" onchange="markDirty()">
+              <option value="Heltec V3">Heltec V3 (ESP32-S3)</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label data-debug-id="PB-META-NOTES-LBL">Notes</label>
+            <input type="text" id="pb-notes" placeholder="Brief description of this product"
+                   data-debug-id="PB-META-NOTES" oninput="markDirty()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Device settings -->
+    <div class="card" data-debug-id="PB-CFG-CARD">
+      <div class="card-hdr" data-debug-id="PB-CFG-HDR">⚙️ Device Settings</div>
+      <div class="card-body" data-debug-id="PB-CFG-BODY">
+        <div class="form-grid cols-2">
+          <div class="field">
+            <label data-debug-id="PB-CFG-DEVNAME-LBL">Device Name</label>
+            <input type="text" id="pb-devname" placeholder="LORALINK-PROD"
+                   data-debug-id="PB-CFG-DEVNAME" oninput="markDirty()">
+            <span class="input-hint">Max 15 chars, no spaces</span>
+          </div>
+          <div class="field">
+            <label data-debug-id="PB-CFG-CRYPTO-LBL">AES Crypto Key (32 hex)</label>
+            <input type="text" id="pb-crypto" placeholder="AABBCCDDEEFF00112233445566778899"
+                   data-debug-id="PB-CFG-CRYPTO" oninput="markDirty()" maxlength="32">
+          </div>
+          <div class="field">
+            <label data-debug-id="PB-CFG-SSID-LBL">WiFi SSID</label>
+            <input type="text" id="pb-wifi-ssid" placeholder="loralink-mesh"
+                   data-debug-id="PB-CFG-SSID" oninput="markDirty()">
+          </div>
+          <div class="field">
+            <label data-debug-id="PB-CFG-PASS-LBL">WiFi Password</label>
+            <input type="password" id="pb-wifi-pass"
+                   data-debug-id="PB-CFG-PASS" oninput="markDirty()">
+          </div>
+          <div class="field">
+            <label data-debug-id="PB-CFG-MQTT-SRV-LBL">MQTT Server</label>
+            <input type="text" id="pb-mqtt-srv" placeholder="192.168.1.100"
+                   data-debug-id="PB-CFG-MQTT-SRV" oninput="markDirty()">
+          </div>
+          <div class="field">
+            <label data-debug-id="PB-CFG-MQTT-PORT-LBL">MQTT Port</label>
+            <input type="number" id="pb-mqtt-port" placeholder="1883" min="1" max="65535"
+                   data-debug-id="PB-CFG-MQTT-PORT" oninput="markDirty()">
+          </div>
+          <div class="field">
+            <label data-debug-id="PB-CFG-MQTT-USR-LBL">MQTT User</label>
+            <input type="text" id="pb-mqtt-usr" placeholder="admin"
+                   data-debug-id="PB-CFG-MQTT-USR" oninput="markDirty()">
+          </div>
+          <div class="field">
+            <label data-debug-id="PB-CFG-MQTT-PWD-LBL">MQTT Password</label>
+            <input type="password" id="pb-mqtt-pwd"
+                   data-debug-id="PB-CFG-MQTT-PWD" oninput="markDirty()">
+          </div>
+        </div>
+        <hr class="divider">
+        <div style="margin-bottom:6px;">
+          <label style="font-size:11px;color:var(--muted);font-weight:700;"
+                 data-debug-id="PB-CFG-TRANSPORTS-LBL">Enabled Transports</label>
+        </div>
+        <div class="toggles-row" data-debug-id="PB-CFG-TRANSPORTS">
+          <div class="toggle-item" data-debug-id="PB-CFG-T-WIFI">
+            <input type="checkbox" id="pb-en-wifi" data-debug-id="PB-CFG-T-WIFI-CB" onchange="markDirty()">
+            <label for="pb-en-wifi">WiFi</label>
+          </div>
+          <div class="toggle-item" data-debug-id="PB-CFG-T-BLE">
+            <input type="checkbox" id="pb-en-ble" data-debug-id="PB-CFG-T-BLE-CB" onchange="markDirty()">
+            <label for="pb-en-ble">BLE</label>
+          </div>
+          <div class="toggle-item" data-debug-id="PB-CFG-T-ESPNOW">
+            <input type="checkbox" id="pb-en-espnow" data-debug-id="PB-CFG-T-ESPNOW-CB" onchange="markDirty()">
+            <label for="pb-en-espnow">ESP-NOW</label>
+          </div>
+          <div class="toggle-item" data-debug-id="PB-CFG-T-MQTT">
+            <input type="checkbox" id="pb-en-mqtt" data-debug-id="PB-CFG-T-MQTT-CB" onchange="markDirty()">
+            <label for="pb-en-mqtt">MQTT</label>
+          </div>
+          <div class="toggle-item" data-debug-id="PB-CFG-T-REPEATER">
+            <input type="checkbox" id="pb-en-repeater" data-debug-id="PB-CFG-T-REPEATER-CB" onchange="markDirty()">
+            <label for="pb-en-repeater">Repeater</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Named pins -->
+    <div class="card" data-debug-id="PB-PINS-CARD">
+      <div class="card-hdr" data-debug-id="PB-PINS-HDR">
+        🔌 Named Pins
+        <span style="margin-left:auto;font-size:10px;font-weight:400;color:var(--muted);">
+          Pin 14 reserved — hardware hazard
+        </span>
+      </div>
+      <div class="card-body" data-debug-id="PB-PINS-BODY">
+        <table class="pin-table" data-debug-id="PB-PINS-TABLE">
+          <thead>
+            <tr>
+              <th data-debug-id="PB-PINS-TH-NUM">Pin #</th>
+              <th data-debug-id="PB-PINS-TH-NAME">Name</th>
+              <th data-debug-id="PB-PINS-TH-EN">Enabled</th>
+              <th data-debug-id="PB-PINS-TH-WARN"></th>
+              <th data-debug-id="PB-PINS-TH-DEL"></th>
+            </tr>
+          </thead>
+          <tbody id="pb-pin-rows" data-debug-id="PB-PINS-ROWS"></tbody>
+        </table>
+        <div class="btn-row" style="margin-top:10px;">
+          <button class="btn btn-ghost btn-sm" onclick="addPinRow()" data-debug-id="PB-PINS-BTN-ADD">+ Add Pin</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule tasks -->
+    <div class="card" data-debug-id="PB-SCHED-CARD">
+      <div class="card-hdr" data-debug-id="PB-SCHED-HDR">🕒 Schedule Tasks</div>
+      <div class="card-body" data-debug-id="PB-SCHED-BODY">
+        <div class="slot-count" id="pb-slot-count" data-debug-id="PB-SCHED-COUNT">0 tasks</div>
+        <table class="sched-table" data-debug-id="PB-SCHED-TABLE">
+          <thead>
+            <tr>
+              <th data-debug-id="PB-SCHED-TH-NAME">Name</th>
+              <th data-debug-id="PB-SCHED-TH-TYPE">Type</th>
+              <th data-debug-id="PB-SCHED-TH-PIN">Pin</th>
+              <th data-debug-id="PB-SCHED-TH-INT">Interval(s)</th>
+              <th data-debug-id="PB-SCHED-TH-DUR">Duration(s)</th>
+              <th data-debug-id="PB-SCHED-TH-VAL">Value</th>
+              <th data-debug-id="PB-SCHED-TH-TPIN">Trig Pin</th>
+              <th data-debug-id="PB-SCHED-TH-TMODE">Trig Mode</th>
+              <th data-debug-id="PB-SCHED-TH-CRIT">Crit</th>
+              <th data-debug-id="PB-SCHED-TH-DEL"></th>
+            </tr>
+          </thead>
+          <tbody id="pb-sched-rows" data-debug-id="PB-SCHED-ROWS"></tbody>
+        </table>
+        <div class="btn-row" style="margin-top:10px;">
+          <button class="btn btn-ghost btn-sm" onclick="addSchedRow()" data-debug-id="PB-SCHED-BTN-ADD">+ Add Task</button>
+        </div>
+        <p style="font-size:10px;color:var(--muted);margin-top:8px;" data-debug-id="PB-SCHED-HINT">
+          Interval: repeat every N seconds (0 = one-shot on boot). Duration: PULSE hold time in seconds.
+          Value: output level 0–255. Trig Pin: -1 = no trigger. Trig Mode: 0=ABOVE, 1=BELOW thresh.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="statusbar" data-debug-id="PB-STATUS">
+  <span class="status-msg" id="pb-status-msg" data-debug-id="PB-STATUS-MSG">Select a product or create a new one.</span>
+  <span id="pb-status-ts" data-debug-id="PB-STATUS-TS" style="font-size:10px;"></span>
+</footer>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+let _products      = [];    // [{filename, manifest}]
+let _currentFile   = null;  // active product_*.json filename
+let _dirty         = false;
+
+// ── Status ───────────────────────────────────────────────────────────────────
+function setStatus(msg, level) {
+  const el = document.getElementById('pb-status-msg');
+  el.textContent = msg;
+  el.className   = level ? 'status-msg ' + level : 'status-msg';
+  document.getElementById('pb-status-ts').textContent = new Date().toLocaleTimeString();
+}
+
+function markDirty() {
+  if (_dirty) return;
+  _dirty = true;
+  const b = document.getElementById('pb-save-badge');
+  b.textContent = 'unsaved changes'; b.className = 'badge warn';
+}
+
+function markClean() {
+  _dirty = false;
+  const b = document.getElementById('pb-save-badge');
+  b.textContent = 'saved'; b.className = 'badge ok';
+}
+
+// ── Product list ─────────────────────────────────────────────────────────────
+async function loadProducts() {
+  try {
+    const r    = await fetch('/api/files');
+    const data = await r.json();
+    const mfs  = (data.files || []).filter(f => f.name.startsWith('product_') && f.name.endsWith('.json'));
+
+    _products = await Promise.all(mfs.map(async f => {
+      try {
+        const mr = await fetch('/api/files/' + encodeURIComponent(f.name));
+        return { filename: f.name, manifest: JSON.parse(await mr.text()) };
+      } catch {
+        return { filename: f.name, manifest: { name: f.name } };
+      }
+    }));
+
+    renderProductList();
+    setStatus(_products.length + ' product(s) loaded.');
+  } catch (e) {
+    setStatus('Failed to load products: ' + e.message, 'err');
+  }
+}
+
+function renderProductList() {
+  const list = document.getElementById('pb-product-list');
+  list.replaceChildren(); // safe — no user content, just re-rendering
+
+  if (!_products.length) {
+    const em = document.createElement('div');
+    em.style.cssText = 'color:var(--muted);font-size:11px;padding:4px;';
+    em.textContent   = 'No products yet.';
+    list.appendChild(em);
+    return;
+  }
+
+  _products.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'product-item' + (p.filename === _currentFile ? ' active' : '');
+    item.onclick   = () => loadProduct(p.filename);
+
+    const nameEl = document.createElement('div');
+    nameEl.className   = 'pi-name';
+    nameEl.textContent = p.manifest.name || p.filename;
+
+    const verEl = document.createElement('div');
+    verEl.className   = 'pi-ver';
+    verEl.textContent = 'v' + (p.manifest.version || '?');
+
+    item.append(nameEl, verEl);
+    list.appendChild(item);
+  });
+}
+
+// ── Load product ─────────────────────────────────────────────────────────────
+async function loadProduct(filename) {
+  if (_dirty && !confirm('You have unsaved changes. Discard them?')) return;
+  _currentFile = filename;
+  renderProductList();
+
+  try {
+    const mr       = await fetch('/api/files/' + encodeURIComponent(filename));
+    const manifest = JSON.parse(await mr.text());
+
+    let cfg   = null;
+    let sched = [];
+
+    if (manifest.config_file) {
+      try {
+        const cr = await fetch('/api/files/' + encodeURIComponent(manifest.config_file));
+        cfg = JSON.parse(await cr.text());
+      } catch {}
+    }
+    if (manifest.schedule_file) {
+      try {
+        const sr = await fetch('/api/files/' + encodeURIComponent(manifest.schedule_file));
+        const s  = JSON.parse(await sr.text());
+        sched = Array.isArray(s) ? s : [];
+      } catch {}
+    }
+
+    populateForm(manifest, cfg, sched);
+    markClean();
+    setStatus('Loaded: ' + (manifest.name || filename));
+  } catch (e) {
+    setStatus('Error loading product: ' + e.message, 'err');
+  }
+}
+
+// ── Populate form ────────────────────────────────────────────────────────────
+function populateForm(manifest, cfg, sched) {
+  document.getElementById('pb-name').value    = manifest.name    || '';
+  document.getElementById('pb-version').value = manifest.version || '1.0';
+  document.getElementById('pb-hw').value      = manifest.hw      || 'Heltec V3';
+  document.getElementById('pb-notes').value   = manifest.notes   || '';
+
+  const s = (cfg && cfg.settings) ? cfg.settings : {};
+  document.getElementById('pb-devname').value   = s.dev_name   || '';
+  document.getElementById('pb-wifi-ssid').value = s.wifi_ssid  || '';
+  document.getElementById('pb-wifi-pass').value = s.wifi_pass  || '';
+  document.getElementById('pb-mqtt-srv').value  = s.mqtt_srv   || '';
+  document.getElementById('pb-mqtt-port').value = s.mqtt_prt   || 1883;
+  document.getElementById('pb-mqtt-usr').value  = s.mqtt_usr   || '';
+  document.getElementById('pb-mqtt-pwd').value  = s.mqtt_pwd   || '';
+  document.getElementById('pb-crypto').value    = s.crypto_key || '';
+
+  document.getElementById('pb-en-wifi').checked     = !!s.wifi_en;
+  document.getElementById('pb-en-ble').checked      = !!s.ble_en;
+  document.getElementById('pb-en-espnow').checked   = !!s.espnow_en;
+  document.getElementById('pb-en-mqtt').checked     = !!s.mqtt_en;
+  document.getElementById('pb-en-repeater').checked = !!s.repeater;
+
+  // Pins
+  const pinTbody = document.getElementById('pb-pin-rows');
+  pinTbody.replaceChildren();
+  if (cfg && cfg.pins) {
+    Object.entries(cfg.pins).forEach(([num, pd]) => appendPinRow(parseInt(num), pd.name || '', pd.en !== false));
+  }
+
+  // Schedule
+  const schedTbody = document.getElementById('pb-sched-rows');
+  schedTbody.replaceChildren();
+  if (Array.isArray(sched)) sched.forEach(t => appendSchedRow(t));
+  updateSlotCount();
+}
+
+// ── New product ───────────────────────────────────────────────────────────────
+function newProduct() {
+  if (_dirty && !confirm('Discard unsaved changes?')) return;
+  _currentFile = null;
+  renderProductList();
+  populateForm(
+    { name: '', version: '1.0', hw: 'Heltec V3', notes: '' },
+    { settings: { wifi_en: true, ble_en: true, espnow_en: false, mqtt_en: false, repeater: false } },
+    []
+  );
+  markDirty();
+  document.getElementById('pb-name').focus();
+  setStatus('New product — fill in details and save.');
+}
+
+// ── Pin rows ──────────────────────────────────────────────────────────────────
+function addPinRow() { appendPinRow(0, '', true); markDirty(); }
+
+function appendPinRow(num, name, enabled) {
+  const tbody = document.getElementById('pb-pin-rows');
+  const tr    = document.createElement('tr');
+
+  // Pin number
+  const tdNum  = document.createElement('td');
+  const inpNum = document.createElement('input');
+  inpNum.type = 'number'; inpNum.min = 0; inpNum.max = 48;
+  inpNum.value = num; inpNum.style.width = '60px';
+
+  // Name
+  const tdName  = document.createElement('td');
+  const inpName = document.createElement('input');
+  inpName.type = 'text'; inpName.value = name;
+  inpName.style.width = '120px'; inpName.placeholder = 'RELAY_CH1';
+  inpName.oninput = () => markDirty();
+
+  // Enabled
+  const tdEn = document.createElement('td');
+  tdEn.style.textAlign = 'center';
+  const cbEn = document.createElement('input');
+  cbEn.type = 'checkbox'; cbEn.checked = enabled;
+  cbEn.onchange = () => markDirty();
+  tdEn.appendChild(cbEn);
+
+  // Warn cell (built first so validatePin can reference it)
+  const tdWarn = document.createElement('td');
+  tdWarn.className = 'pin-warn';
+
+  inpNum.oninput = () => { validatePin(inpNum, tdWarn); markDirty(); };
+  validatePin(inpNum, tdWarn);
+
+  // Delete
+  const tdDel = document.createElement('td');
+  const btnDel = document.createElement('button');
+  btnDel.className = 'btn btn-ghost btn-sm'; btnDel.textContent = '✕';
+  btnDel.onclick = () => { tr.remove(); markDirty(); };
+  tdDel.appendChild(btnDel);
+
+  tdNum.appendChild(inpNum);
+  tdName.appendChild(inpName);
+  tr.append(tdNum, tdName, tdEn, tdWarn, tdDel);
+  tbody.appendChild(tr);
+}
+
+function validatePin(inpNum, tdWarn) {
+  const v = parseInt(inpNum.value);
+  if (v === 14) {
+    tdWarn.textContent = '⚠ HAZARD';
+    inpNum.classList.add('err');
+  } else {
+    tdWarn.textContent = '';
+    inpNum.classList.remove('err');
+  }
+}
+
+// ── Schedule rows ─────────────────────────────────────────────────────────────
+function updateSlotCount() {
+  const n  = document.getElementById('pb-sched-rows').querySelectorAll('tr').length;
+  const el = document.getElementById('pb-slot-count');
+  el.textContent = n + ' task' + (n !== 1 ? 's' : '');
+}
+
+function addSchedRow() {
+  appendSchedRow({ name:'', type:'PULSE', pin:35, interval:60, duration:1, value:255, trig_pin:-1, trig_mode:0, thresh:0, crit:false });
+  markDirty();
+}
+
+function appendSchedRow(t) {
+  const tbody = document.getElementById('pb-sched-rows');
+  const tr    = document.createElement('tr');
+
+  function inp(val, w, type) {
+    const i = document.createElement('input');
+    i.type = type || 'text'; i.value = val; i.style.width = w;
+    i.oninput = () => markDirty();
+    return i;
+  }
+  function sel(opts, val) {
+    const s = document.createElement('select');
+    s.style.width = '70px';
+    opts.forEach(([v, l]) => {
+      const o = document.createElement('option');
+      o.value = v; o.textContent = l;
+      if (String(v) === String(val)) o.selected = true;
+      s.appendChild(o);
+    });
+    s.onchange = () => markDirty();
+    return s;
+  }
+
+  const widgets = [
+    inp(t.name      || '',  '90px'),
+    sel([['PULSE','PULSE'],['TOGGLE','TOGGLE']], t.type || 'PULSE'),
+    inp(t.pin       ?? 35,  '45px', 'number'),
+    inp(t.interval  ?? 60,  '50px', 'number'),
+    inp(t.duration  ?? 1,   '50px', 'number'),
+    inp(t.value     ?? 255, '45px', 'number'),
+    inp(t.trig_pin  ?? -1,  '45px', 'number'),
+    sel([[0,'ABOVE'],[1,'BELOW']], t.trig_mode ?? 0),
+  ];
+
+  widgets.forEach(w => {
+    const td = document.createElement('td');
+    td.appendChild(w);
+    tr.appendChild(td);
+  });
+
+  // Crit
+  const tdCrit = document.createElement('td');
+  tdCrit.style.textAlign = 'center';
+  const cbCrit = document.createElement('input');
+  cbCrit.type = 'checkbox'; cbCrit.checked = !!t.crit;
+  cbCrit.className = 'sched-crit';
+  cbCrit.onchange = () => markDirty();
+  tdCrit.appendChild(cbCrit);
+  tr.appendChild(tdCrit);
+
+  // Delete
+  const tdDel = document.createElement('td');
+  const btnDel = document.createElement('button');
+  btnDel.className = 'btn btn-ghost btn-sm'; btnDel.textContent = '✕';
+  btnDel.onclick = () => { tr.remove(); updateSlotCount(); markDirty(); };
+  tdDel.appendChild(btnDel);
+  tr.appendChild(tdDel);
+
+  tbody.appendChild(tr);
+  updateSlotCount();
+}
+
+// ── Collect form data ─────────────────────────────────────────────────────────
+function productSlug() {
+  const name = document.getElementById('pb-name').value.trim();
+  if (!name) return null;
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+}
+
+function collectManifest(cfgFile, schedFile) {
+  return {
+    _schema: 'loralink-product-v1',
+    name:    document.getElementById('pb-name').value.trim(),
+    hw:      document.getElementById('pb-hw').value,
+    version: document.getElementById('pb-version').value.trim() || '1.0',
+    notes:   document.getElementById('pb-notes').value.trim(),
+    config_file:   cfgFile,
+    schedule_file: schedFile,
+    preferred_transport: document.getElementById('pb-transport').value,
+    preferred_format: 'J',
+  };
+}
+
+function collectConfig() {
+  const pins = {};
+  document.getElementById('pb-pin-rows').querySelectorAll('tr').forEach(tr => {
+    const inputs  = tr.querySelectorAll('input');
+    const numVal  = parseInt(inputs[0].value);
+    if (isNaN(numVal)) return;
+    pins[String(numVal)] = {
+      name: inputs[1].value.trim(),
+      en:   inputs[2].checked,
+    };
+  });
+
+  return {
+    schema: '1.0',
+    hardware_id: document.getElementById('pb-hw').value,
+    settings: {
+      dev_name:   document.getElementById('pb-devname').value.trim(),
+      wifi_ssid:  document.getElementById('pb-wifi-ssid').value.trim(),
+      wifi_pass:  document.getElementById('pb-wifi-pass').value,
+      static_ip: '', gateway: '', subnet: '',
+      repeater:   document.getElementById('pb-en-repeater').checked,
+      mqtt_en:    document.getElementById('pb-en-mqtt').checked,
+      mqtt_srv:   document.getElementById('pb-mqtt-srv').value.trim(),
+      mqtt_prt:   parseInt(document.getElementById('pb-mqtt-port').value) || 1883,
+      mqtt_usr:   document.getElementById('pb-mqtt-usr').value.trim(),
+      mqtt_pwd:   document.getElementById('pb-mqtt-pwd').value,
+      espnow_en:  document.getElementById('pb-en-espnow').checked,
+      wifi_en:    document.getElementById('pb-en-wifi').checked,
+      ble_en:     document.getElementById('pb-en-ble').checked,
+      crypto_key: document.getElementById('pb-crypto').value.trim(),
+    },
+    pins,
+  };
+}
+
+function collectSchedule() {
+  const tasks = [];
+  document.getElementById('pb-sched-rows').querySelectorAll('tr').forEach(tr => {
+    const tds   = Array.from(tr.querySelectorAll('td'));
+    const cells = tds.map(td => td.querySelector('input,select'));
+    if (cells.length < 9 || !cells[0]) return;
+    tasks.push({
+      name:      cells[0].value.trim(),
+      type:      cells[1].value,
+      pin:       parseInt(cells[2].value)  || 0,
+      interval:  parseInt(cells[3].value)  || 0,
+      duration:  parseInt(cells[4].value)  || 0,
+      value:     parseInt(cells[5].value)  ?? 255,
+      trig_pin:  parseInt(cells[6].value)  ?? -1,
+      trig_mode: parseInt(cells[7].value)  || 0,
+      thresh:    0,
+      crit:      cells[8].checked,
+    });
+  });
+  return tasks;
+}
+
+// ── Save product ──────────────────────────────────────────────────────────────
+async function saveProduct() {
+  const name = document.getElementById('pb-name').value.trim();
+  if (!name) { setStatus('Product name is required.', 'err'); return; }
+
+  // Guard pin 14
+  let hasPin14 = false;
+  document.getElementById('pb-pin-rows').querySelectorAll('tr').forEach(tr => {
+    const n = parseInt(tr.querySelector('input[type=number]').value);
+    if (n === 14) hasPin14 = true;
+  });
+  if (hasPin14) { setStatus('Pin 14 is a hardware hazard and cannot be used.', 'err'); return; }
+
+  const slug     = productSlug();
+  const cfgFile  = 'config_'   + slug + '.json';
+  const schedFile= 'sched_'    + slug + '.json';
+  const manFile  = 'product_'  + slug + '.json';
+
+  const manifest = collectManifest(cfgFile, schedFile);
+  const cfg      = collectConfig();
+  const sched    = collectSchedule();
+
+  setStatus('Saving…');
+
+  async function saveFile(fname, obj) {
+    return fetch('/api/files/' + encodeURIComponent(fname), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: JSON.stringify(obj, null, 2) }),
+    });
+  }
+
+  try {
+    const [r1, r2, r3] = await Promise.all([
+      saveFile(manFile,  manifest),
+      saveFile(cfgFile,  cfg),
+      saveFile(schedFile, sched),
+    ]);
+    if (!r1.ok || !r2.ok || !r3.ok) throw new Error('Server returned error');
+    _currentFile = manFile;
+    await loadProducts();
+    markClean();
+    setStatus('Saved: ' + manFile + ', ' + cfgFile + ', ' + schedFile, 'ok');
+  } catch (e) {
+    setStatus('Save failed: ' + e.message, 'err');
+  }
+}
+
+// ── Delete product ────────────────────────────────────────────────────────────
+async function deleteProduct() {
+  if (!_currentFile) { setStatus('No product selected.', 'warn'); return; }
+  if (!confirm('Delete this product and its linked config/schedule files?')) return;
+
+  const prod  = _products.find(p => p.filename === _currentFile);
+  const files = [_currentFile];
+  if (prod && prod.manifest.config_file)   files.push(prod.manifest.config_file);
+  if (prod && prod.manifest.schedule_file) files.push(prod.manifest.schedule_file);
+
+  try {
+    await Promise.all(files.map(f => fetch('/api/files/' + encodeURIComponent(f), { method: 'DELETE' })));
+    _currentFile = null; _dirty = false;
+    await loadProducts();
+    populateForm({ name:'', version:'1.0' }, null, []);
+    const b = document.getElementById('pb-save-badge');
+    b.textContent = 'unsaved'; b.className = 'badge';
+    setStatus('Product deleted.', 'ok');
+  } catch (e) {
+    setStatus('Delete failed: ' + e.message, 'err');
+  }
+}
+
+// ── Import from device ────────────────────────────────────────────────────────
+async function importFromDevice() {
+  setStatus('Pulling config from device…');
+  try {
+    const r = await fetch('/api/device/config');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const cfg = await r.json();
+    if (cfg.error) throw new Error(cfg.error);
+
+    let sched = [];
+    try {
+      const sr = await fetch('/api/schedule');
+      const sd = await sr.json();
+      sched = sd.schedules || [];
+    } catch {}
+
+    populateForm(
+      { name: cfg.settings?.dev_name || 'Imported Device', version: '1.0',
+        hw: 'Heltec V3', notes: 'Imported ' + new Date().toLocaleString() },
+      cfg, sched
+    );
+    _currentFile = null;
+    markDirty();
+    setStatus('Config imported — review and save as a product.', 'ok');
+  } catch (e) {
+    setStatus('Import failed: ' + e.message + ' — is device connected?', 'err');
+  }
+}
+
+// ── Deploy product ────────────────────────────────────────────────────────────
+async function deployProduct() {
+  if (_dirty) {
+    if (!confirm('Unsaved changes. Save before deploying?')) return;
+    await saveProduct();
+    if (_dirty) return;
+  }
+  if (!_currentFile) { setStatus('No product selected.', 'warn'); return; }
+
+  const prod = _products.find(p => p.filename === _currentFile);
+  if (!prod) { setStatus('Product not found in list.', 'err'); return; }
+
+  const resultEl = document.getElementById('pb-deploy-result');
+  resultEl.style.display = 'none';
+  setStatus('Deploying…');
+
+  let cfgOk = false, schedOk = false, cfgErr = '', schedErr = '';
+
+  // Step 1: config
+  if (prod.manifest.config_file) {
+    try {
+      const cr  = await fetch('/api/files/' + encodeURIComponent(prod.manifest.config_file));
+      const cfg = JSON.parse(await cr.text());
+      const ar  = await fetch('/api/device/config/apply', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cfg),
+      });
+      if (ar.ok) cfgOk = true; else cfgErr = await ar.text();
+    } catch (e) { cfgErr = e.message; }
+  }
+
+  // Step 2: schedule (clear → add each task → save)
+  if (prod.manifest.schedule_file) {
+    try {
+      const sr    = await fetch('/api/files/' + encodeURIComponent(prod.manifest.schedule_file));
+      const tasks = JSON.parse(await sr.text());
+      await fetch('/api/schedule/clear', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
+      });
+      for (const t of (Array.isArray(tasks) ? tasks : [])) {
+        await fetch('/api/schedule/add', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(t),
+        });
+      }
+      const saveR = await fetch('/api/schedule/save', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
+      });
+      if (saveR.ok) schedOk = true; else schedErr = await saveR.text();
+    } catch (e) { schedErr = e.message; }
+  }
+
+  const lines = [
+    'Product : ' + (prod.manifest.name || _currentFile),
+    'Config  : ' + (cfgOk    ? '✓ applied' : prod.manifest.config_file   ? '✗ ' + cfgErr   : '— none'),
+    'Schedule: ' + (schedOk  ? '✓ applied' : prod.manifest.schedule_file ? '✗ ' + schedErr : '— none'),
+    'Time    : ' + new Date().toLocaleTimeString(),
+  ];
+  const allOk = cfgOk || schedOk;
+  resultEl.replaceChildren();
+  // safe: all content is local strings, not user-supplied HTML
+  resultEl.textContent  = lines.join('\n');
+  resultEl.style.display = 'block';
+  resultEl.className    = 'deploy-result ' + (allOk ? 'ok' : 'err');
+  setStatus(allOk ? 'Deploy complete.' : 'Deploy had errors.', allOk ? 'ok' : 'err');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadProducts();
+</script>
+</body>
+</html>

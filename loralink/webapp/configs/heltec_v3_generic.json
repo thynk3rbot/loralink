@@ -1,0 +1,46 @@
+{
+  "schema": "1.0",
+  "hardware_id": "Heltec ESP32 LoRa V3",
+  "settings": {
+    "dev_name": "LoRaLink",
+    "wifi_ssid": "spw1-5g",
+    "wifi_pass": "OPTMyxlpyx99!",
+    "static_ip": "",
+    "gateway": "",
+    "subnet": "",
+    "repeater": false,
+    "mqtt_en": false,
+    "mqtt_srv": "broker.emqx.io",
+    "mqtt_prt": 1883,
+    "mqtt_usr": "",
+    "mqtt_pwd": "",
+    "espnow_en": true,
+    "wifi_en": true,
+    "ble_en": true,
+    "crypto_key": "00112233445566778899AABBCCDDEEFF"
+  },
+  "pins": {
+    "35": {
+      "name": "LED",
+      "en": true
+    },
+    "6": {
+      "name": "RL12_2",
+      "en": true
+    },
+    "7": {
+      "name": "RL12_3",
+      "en": true
+    },
+    "1": {
+      "name": "BatSensor",
+      "en": true
+    }
+  },
+  "_comments": {
+    "purpose": "Generic GPIO control config for lab/bench testing",
+    "wifi_disabled": "Set for offline testing - enable and configure SSID/password for network use",
+    "ble_enabled": "For testing BLE control from PC tools",
+    "pins": "LED=heartbeat indicator, RL12_2/RL12_3=relay outputs, BatSensor=ADC input"
+  }
+}

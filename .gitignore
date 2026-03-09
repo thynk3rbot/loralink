@@ -1,0 +1,30 @@
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Build artifacts
+*.o
+*.a
+.pio/
+
+# Logs
+logs/
+*.log
+
+# Credentials
+.env
+.env.local
+secret_key.py

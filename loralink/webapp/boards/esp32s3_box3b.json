@@ -1,0 +1,67 @@
+{
+  "id": "esp32s3_box3b",
+  "name": "ESP32-S3-BOX-3B",
+  "width": 140,
+  "height": 175,
+  "silkscreen": [
+    {"type": "text", "x": 70, "y": 9,  "label": "ESP32-S3-BOX-3B",      "style": "font-weight:bold; font-size:5px; fill:#fff;"},
+    {"type": "rect", "x": 20, "y": 14, "w": 100, "h": 55, "style": "fill:#080c14; stroke:#334;"},
+    {"type": "text", "x": 70, "y": 31, "label": "2.4\" IPS Touch",       "style": "font-size:4px; fill:#336;"},
+    {"type": "text", "x": 70, "y": 40, "label": "320×240",               "style": "font-size:4px; fill:#334;"},
+    {"type": "rect", "x": 55, "y": 73, "w": 30, "h": 8,  "style": "fill:#111; stroke:#444;"},
+    {"type": "text", "x": 70, "y": 79, "label": "Expansion P1",          "style": "font-size:3.5px; fill:#888;"}
+  ],
+  "headers": [
+    {
+      "id": "P1-Left",
+      "side": "left",
+      "start_x": 15,
+      "start_y": 85,
+      "pitch": 7,
+      "pins": [
+        {"pos": 1,  "label": "GND",  "type": "gnd"},
+        {"pos": 2,  "label": "3V3",  "type": "pwr"},
+        {"pos": 3,  "label": "G0",   "gpio": 0,  "type": "gpio"},
+        {"pos": 4,  "label": "G1",   "gpio": 1,  "type": "adc"},
+        {"pos": 5,  "label": "G2",   "gpio": 2,  "type": "adc"},
+        {"pos": 6,  "label": "G3",   "gpio": 3,  "type": "adc"},
+        {"pos": 7,  "label": "G4",   "gpio": 4,  "type": "adc"},
+        {"pos": 8,  "label": "G5",   "gpio": 5,  "type": "adc"},
+        {"pos": 9,  "label": "G6",   "gpio": 6,  "type": "adc"},
+        {"pos": 10, "label": "G7",   "gpio": 7,  "type": "adc"},
+        {"pos": 11, "label": "G8",   "gpio": 8,  "type": "adc"},
+        {"pos": 12, "label": "G9",   "gpio": 9,  "type": "adc"},
+        {"pos": 13, "label": "G10",  "gpio": 10, "type": "adc"},
+        {"pos": 14, "label": "GND",  "type": "gnd"}
+      ]
+    },
+    {
+      "id": "P1-Right",
+      "side": "right",
+      "start_x": 125,
+      "start_y": 85,
+      "pitch": 7,
+      "pins": [
+        {"pos": 1,  "label": "5V",   "type": "pwr"},
+        {"pos": 2,  "label": "GND",  "type": "gnd"},
+        {"pos": 3,  "label": "G38",  "gpio": 38, "type": "gpio"},
+        {"pos": 4,  "label": "G39",  "gpio": 39, "type": "gpio"},
+        {"pos": 5,  "label": "G40",  "gpio": 40, "type": "gpio"},
+        {"pos": 6,  "label": "G41",  "gpio": 41, "type": "gpio"},
+        {"pos": 7,  "label": "G42",  "gpio": 42, "type": "gpio"},
+        {"pos": 8,  "label": "G43",  "gpio": 43, "type": "fix"},
+        {"pos": 9,  "label": "G44",  "gpio": 44, "type": "fix"},
+        {"pos": 10, "label": "G45",  "gpio": 45, "type": "gpio"},
+        {"pos": 11, "label": "G46",  "gpio": 46, "type": "gpio"},
+        {"pos": 12, "label": "G47",  "gpio": 47, "type": "gpio"},
+        {"pos": 13, "label": "G48",  "gpio": 48, "type": "gpio"},
+        {"pos": 14, "label": "GND",  "type": "gnd"}
+      ]
+    }
+  ],
+  "peripherals": [
+    {"id": "mic",     "gpio": -1, "type": "btn", "x": 40,  "y": 165, "label": "Mic"},
+    {"id": "spk",     "gpio": -1, "type": "btn", "x": 100, "y": 165, "label": "Speaker"},
+    {"id": "boot_btn","gpio": 0,  "type": "btn", "x": 70,  "y": 165, "label": "BOOT"}
+  ]
+}

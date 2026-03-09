@@ -1,0 +1,31 @@
+{
+  "schema": "1.0",
+  "hardware_id": "Heltec ESP32 LoRa V3",
+  "settings": {
+    "dev_name": "LAB-BENCH",
+    "wifi_ssid": "spw1-5g",
+    "wifi_pass": "OPTMyxlpyx99!",
+    "static_ip": "",
+    "gateway": "",
+    "subnet": "",
+    "repeater": false,
+    "mqtt_en": true,
+    "mqtt_srv": "broker.emqx.io",
+    "mqtt_prt": 1883,
+    "mqtt_usr": "",
+    "mqtt_pwd": "",
+    "espnow_en": true,
+    "wifi_en": true,
+    "ble_en": true,
+    "crypto_key": "FEDCBA98765432100123456789ABCDEF"
+  },
+  "pins": {
+    "35": { "name": "LED_HB", "en": true },
+    "0": { "name": "USER_BTN", "en": true },
+    "46": { "name": "GPIO_PROTO", "en": true }
+  },
+  "_comments": {
+    "purpose": "General development and debugging bench config",
+    "setup": "All radios enabled; provides user button interrupt testing"
+  }
+}

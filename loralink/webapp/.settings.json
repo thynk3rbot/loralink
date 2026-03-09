@@ -1,0 +1,5 @@
+{
+  "transport_strategy": "http_first",
+  "ble_prefix_a": "Master",
+  "ble_prefix_b": "Slave"
+}

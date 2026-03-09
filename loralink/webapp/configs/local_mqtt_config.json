@@ -1,0 +1,11 @@
+{
+  "schema": "1.0",
+  "hardware_id": "Heltec ESP32 LoRa V3",
+  "settings": {
+    "mqtt_en": true,
+    "mqtt_srv": "172.16.0.25",
+    "mqtt_prt": 1883,
+    "mqtt_usr": "",
+    "mqtt_pwd": ""
+  }
+}

@@ -1,0 +1,26 @@
+schema,1.0
+hardware_id,Heltec ESP32 LoRa V3
+dev_name,LoRaLink-TestUnit-V3
+wifi_ssid,
+wifi_pass,
+static_ip,
+gateway,
+subnet,
+repeater,false
+mqtt_en,false
+mqtt_srv,broker.emqx.io
+mqtt_prt,1883
+mqtt_usr,
+mqtt_pwd,
+espnow_en,false
+wifi_en,false
+ble_en,true
+crypto_key,00112233445566778899AABBCCDDEEFF
+pin_35_name,LED
+pin_35_en,true
+pin_6_name,RL12_2
+pin_6_en,true
+pin_7_name,RL12_3
+pin_7_en,true
+pin_1_name,BatSensor
+pin_1_en,true

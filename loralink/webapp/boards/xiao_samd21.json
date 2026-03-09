@@ -1,0 +1,40 @@
+{
+  "id": "xiao_samd21",
+  "name": "Seeeduino Xiao (SAMD21)",
+  "width": 60,
+  "height": 70,
+  "headers": [
+    {
+      "id": "Left",
+      "side": "left",
+      "start_x": 10,
+      "start_y": 15,
+      "pitch": 8,
+      "pins": [
+        {"pos": 1, "label": "D0", "gpio": 0, "type": "gpio"},
+        {"pos": 2, "label": "D1", "gpio": 1, "type": "gpio"},
+        {"pos": 3, "label": "D2", "gpio": 2, "type": "gpio"},
+        {"pos": 4, "label": "D3", "gpio": 3, "type": "gpio"},
+        {"pos": 5, "label": "D4", "gpio": 4, "type": "gpio"},
+        {"pos": 6, "label": "D5", "gpio": 5, "type": "gpio"},
+        {"pos": 7, "label": "D6", "gpio": 6, "type": "gpio"}
+      ]
+    },
+    {
+      "id": "Right",
+      "side": "right",
+      "start_x": 50,
+      "start_y": 15,
+      "pitch": 8,
+      "pins": [
+        {"pos": 8, "label": "5V", "type": "pwr"},
+        {"pos": 9, "label": "GND", "type": "gnd"},
+        {"pos": 10, "label": "3V3", "type": "pwr"},
+        {"pos": 11, "label": "D10", "gpio": 10, "type": "gpio"},
+        {"pos": 12, "label": "D9", "gpio": 9, "type": "gpio"},
+        {"pos": 13, "label": "D8", "gpio": 8, "type": "gpio"},
+        {"pos": 14, "label": "D7", "gpio": 7, "type": "gpio"}
+      ]
+    }
+  ]
+}

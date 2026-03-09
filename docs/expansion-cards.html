@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Expansion Cards — LoRaLink Docs</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">›</span>Expansion Cards</div>
+    <h1>Hardware Expansion Cards</h1>
+    <p>A detailed guide to integrating, testing, and managing various envisioned hardware add-on modules for LoRaLink.</p>
+
+    <!-- SECTION 1: MCP23017 IO Expander -->
+    <h2>1. General I/O Expansion (MCP23017 Card)</h2>
+    <p>The MCP23017 card expands available GPIO significantly, driving up to 16 additional pins via the shared I2C bus.</p>
+
+    <h3>Stub Implementation</h3>
+    <pre><code>#include &lt;Adafruit_MCP23X17.h&gt;
+
+Adafruit_MCP23X17 mcp;
+
+void initMCP23017() {
+  // Use Heltec's pre-configured I2C for OLED avoiding Wire.begin() conflicts.
+  if (!mcp.begin_I2C(0x20)) {
+    Serial.println("MCP23017 Error at I2C 0x20");
+    return;
+  }
+  // Setup Pins 0-7 as Relay Outputs
+  for (int i=0; i&lt;8; i++) mcp.pinMode(i, OUTPUT);
+}</code></pre>
+
+    <h3>UI Representation</h3>
+    <p>In the Fleet Admin or Local Webserver, expanded pins use the prefix format <code>PIN_MCP_{ExpanderID}_{PinNum}</code>. The UI dynamically detects the <code>hw_registry</code> capability bits. If the Expander bit is active, a unique "Expander Module" widget is displayed tracking all 16 IO points concurrently.</p>
+
+    <h3>Communication Testing</h3>
+    <p>To verify the MCP23017 card is communicating properly:</p>
+    <ol>
+      <li><strong>I2C Scan:</strong> Connect a Serial Monitor and reboot the device. Ensure <code>I2C Device found at address 0x20</code> appears in the boot log.</li>
+      <li><strong>Pin Toggle:</strong> Open the Local Webserver and try to toggle <code>PIN_MCP_0_0</code>. Verify the physical pin voltage shifts from 0V to 3.3V.</li>
+    </ol>
+
+    <!-- SECTION 2: Environmental Sensor Card -->
+    <h2>2. Environmental Sensor Card (DHT22 / BME280)</h2>
+    <p>This card collects local climate data, powered down automatically via <code>PIN_VEXT_CTRL</code> between measurements to extend battery life.</p>
+
+    <h3>Stub Implementation</h3>
+    <pre><code>#include &lt;DHT.h&gt;
+
+#define DHTPIN 15
+#define DHTTYPE DHT22
+DHT dht(DHTPIN, DHTTYPE);
+
+void readEnvironmentTask() {
+  digitalWrite(PIN_VEXT_CTRL, LOW); // Turn on Power Rail
+  delay(100); // Allow sensor startup
+
+  float t = dht.readTemperature();
+  float h = dht.readHumidity();
+
+  digitalWrite(PIN_VEXT_CTRL, HIGH); // Shut down Power Rail
+
+  // Format JSON payload for Fleet Telemetry
+  String payload = "{\"temp\":" + String(t) + ",\"hum\":" + String(h) + "}";
+}</code></pre>
+
+    <h3>UI Representation</h3>
+    <p>The Fleet Admin interprets the incoming JSON telemetry and renders a "Climate Card" for that specific node. Data trends over time are tracked on the GIS map.</p>
+
+    <h3>Communication Testing</h3>
+    <p>Observe the Swarm Dashboard UI. A telemetry payload should appear every 5 minutes. If temp returns <code>NaN</code>, physically confirm <code>VExt</code> (Pin 36) is dropping to 0V during the measurement phase, supplying power to the card.</p>
+
+
+    <!-- SECTION 3: Relay Controller Card -->
+    <h2>3. Relay Controller Card (110V & 12V High Power)</h2>
+    <p>Enables heavy payload switching. Demands strict battery thresholds to prevent hardware brownouts.</p>
+
+    <h3>Stub Implementation</h3>
+    <pre><code>void applyRelayState(int pin, bool state) {
+  // Validate System Health before 110V shift
+  if (pin == PIN_RELAY_110V && getBatteryVoltage() &lt; 3.5) {
+     Serial.println("ERR: Insufficient voltage for 110V load.");
+     return;
+  }
+  digitalWrite(pin, state ? HIGH : LOW);
+  saveToNVS("lora_hw", String(pin).c_str(), state);
+}</code></pre>
+
+    <h3>UI Representation</h3>
+    <p>Relays appear inside the "Hardware Override" dashboard. A 110V switch requires a secondary safety confirm (<i>"Are you sure?"</i>) to prevent accidental high-current draw. Failed validations highlight the toggle border in Red.</p>
+
+    <h3>Communication Testing</h3>
+    <p>Activate a 12V relay via the Fleet Administrator. Verify a Command Log entry reading <code>"Sent Toggle Relay to Node-01"</code> is visible. The node should acknowledge by sending a status text reply <code>[MSG] Relay 46 is HIGH</code>.</p>
+
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

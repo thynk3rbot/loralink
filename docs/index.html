@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LoRaLink — Documentation</title>
+  <meta name="description" content="LoRaLink-AnyToAny documentation — unified multi-protocol IoT mesh firmware for ESP32/Heltec V3.">
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="hero">
+      <img src="media/logo.png" alt="LoRaLink" class="hero-logo">
+      <h1>LoRaLink-AnyToAny</h1>
+      <p class="tagline" id="hero-tagline">Connected Where the Map Ends.</p>
+      <div class="cta">
+        <a href="getting-started.html" class="btn btn-primary">▶ Get Started</a>
+        <a href="usage-guide.html" class="btn btn-gold">📖 Usage Guide</a>
+        <a href="api-reference.html" class="btn btn-secondary">⟨⟩ API Docs</a>
+      </div>
+    </div>
+
+    <h2>What Is LoRaLink?</h2>
+    <p>A production-grade ESP32-S3 firmware framework that makes every wireless interface a first-class citizen — LoRa, ESP-NOW, Bluetooth, WiFi, Serial, and MQTT all route through a single, unified command pipeline.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🔗</div>
+        <h3>Multi-Protocol</h3>
+        <p>LoRa, ESP-NOW, BLE, WiFi, Serial, MQTT — commands route between any interface automatically.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <h3>AES-128 Encrypted</h3>
+        <p>All LoRa traffic encrypted with configurable keys. Private sync word isolates your mesh.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🖥</div>
+        <h3>Web Dashboard</h3>
+        <p>Live status, message log, protocol badges, command input, peer map — all from a browser.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏱</div>
+        <h3>Task Scheduling</h3>
+        <p>Dynamic GPIO scheduling with Pulse, Toggle, and PWM modes. Configure via JSON or web UI.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📡</div>
+        <h3>MQTT & Cloud</h3>
+        <p>Publish telemetry to any MQTT broker. Integrate with Home Assistant, Node-RED, or custom dashboards.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <h3>Sub-$30 Per Node</h3>
+        <p>Built on the Heltec WiFi LoRa 32 V3. Multi-kilometer mesh for the cost of a lunch.</p>
+      </div>
+    </div>
+
+    <h2>Quick Links</h2>
+    <table>
+      <thead><tr><th>Resource</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><a href="getting-started.html">Getting Started</a></td><td>Install, flash, first boot walkthrough</td></tr>
+        <tr><td><a href="usage-guide.html">Usage Guide</a></td><td>Complete task-oriented user manual</td></tr>
+        <tr><td><a href="architecture.html">Architecture</a></td><td>CommandManager, protocols, mesh topology</td></tr>
+        <tr><td><a href="api-reference.html">API Reference</a></td><td>REST endpoints, serial commands, MQTT topics</td></tr>
+        <tr><td><a href="hardware.html">Hardware</a></td><td>BOM, pinout, wiring guide</td></tr>
+        <tr><td><a href="admin-guide.html">Admin Guide</a></td><td>Fleet management, discovery, profiles</td></tr>
+        <tr><td><a href="operations.html">System Operations</a></td><td>Service management, Docker, auto-start, crashes</td></tr>
+        <tr><td><a href="troubleshooting.html">Troubleshooting</a></td><td>FAQ, common issues, debug tips</td></tr>
+        <tr><td><a href="changelog.html">Changelog</a></td><td>Version history &amp; release notes</td></tr>
+      </tbody>
+    </table>
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

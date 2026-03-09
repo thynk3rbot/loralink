@@ -1,0 +1,11 @@
+{
+  "_schema": "loralink-product-v1",
+  "name": "FarmGateway v1",
+  "hw": "Heltec V3",
+  "config_file": "heltec_v3_generic.json",
+  "schedule_file": "",
+  "version": "1.0",
+  "notes": "Field irrigation gateway",
+  "preferred_transport": "http",
+  "preferred_format": "J"
+}

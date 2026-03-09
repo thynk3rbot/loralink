@@ -1,0 +1,74 @@
+{
+  "id": "esp32c6_wroom1",
+  "name": "ESP32-C6-WROOM-1E",
+  "width": 100,
+  "height": 200,
+  "silkscreen": [
+    {"type": "text", "x": 50, "y": 8,  "label": "ESP32-C6-WROOM-1E",    "style": "font-weight:bold; font-size:5px; fill:#fff;"},
+    {"type": "rect", "x": 22, "y": 13, "w": 56, "h": 16, "style": "fill:#0a0a0a; stroke:#555;"},
+    {"type": "text", "x": 50, "y": 23, "label": "ESP32-C6 / 2.4G+BLE5", "style": "font-size:3.5px; fill:#888;"},
+    {"type": "rect", "x": 30, "y": 30, "w": 40, "h": 6,  "style": "fill:#1a1a1a; stroke:#2a5a2a;"},
+    {"type": "text", "x": 50, "y": 35, "label": "Wi-Fi 6 Antenna",      "style": "font-size:3px; fill:#4a8;"}
+  ],
+  "headers": [
+    {
+      "id": "Left",
+      "side": "left",
+      "start_x": 8,
+      "start_y": 42,
+      "pitch": 8,
+      "pins": [
+        {"pos": 1,  "label": "GND",   "type": "gnd"},
+        {"pos": 2,  "label": "3V3",   "type": "pwr"},
+        {"pos": 3,  "label": "IO2",   "gpio": 2,  "type": "adc"},
+        {"pos": 4,  "label": "IO3",   "gpio": 3,  "type": "adc"},
+        {"pos": 5,  "label": "IO4",   "gpio": 4,  "type": "adc"},
+        {"pos": 6,  "label": "IO5",   "gpio": 5,  "type": "adc"},
+        {"pos": 7,  "label": "IO6",   "gpio": 6,  "type": "adc"},
+        {"pos": 8,  "label": "IO7",   "gpio": 7,  "type": "adc"},
+        {"pos": 9,  "label": "IO8",   "gpio": 8,  "type": "gpio"},
+        {"pos": 10, "label": "IO9",   "gpio": 9,  "type": "gpio"},
+        {"pos": 11, "label": "IO10",  "gpio": 10, "type": "gpio"},
+        {"pos": 12, "label": "IO11",  "gpio": 11, "type": "gpio"},
+        {"pos": 13, "label": "IO12",  "gpio": 12, "type": "fix"},
+        {"pos": 14, "label": "IO13",  "gpio": 13, "type": "fix"},
+        {"pos": 15, "label": "IO14",  "gpio": 14, "type": "gpio"},
+        {"pos": 16, "label": "IO15",  "gpio": 15, "type": "gpio"},
+        {"pos": 17, "label": "GND",   "type": "gnd"},
+        {"pos": 18, "label": "RXD0",  "gpio": 17, "type": "fix"},
+        {"pos": 19, "label": "TXD0",  "gpio": 16, "type": "fix"}
+      ]
+    },
+    {
+      "id": "Right",
+      "side": "right",
+      "start_x": 92,
+      "start_y": 42,
+      "pitch": 8,
+      "pins": [
+        {"pos": 1,  "label": "GND",   "type": "gnd"},
+        {"pos": 2,  "label": "3V3",   "type": "pwr"},
+        {"pos": 3,  "label": "EN",    "type": "fix"},
+        {"pos": 4,  "label": "IO23",  "gpio": 23, "type": "gpio"},
+        {"pos": 5,  "label": "IO22",  "gpio": 22, "type": "gpio"},
+        {"pos": 6,  "label": "IO21",  "gpio": 21, "type": "gpio"},
+        {"pos": 7,  "label": "IO20",  "gpio": 20, "type": "gpio"},
+        {"pos": 8,  "label": "IO19",  "gpio": 19, "type": "gpio"},
+        {"pos": 9,  "label": "IO18",  "gpio": 18, "type": "gpio"},
+        {"pos": 10, "label": "IO1",   "gpio": 1,  "type": "adc"},
+        {"pos": 11, "label": "IO0",   "gpio": 0,  "type": "adc"},
+        {"pos": 12, "label": "GND",   "type": "gnd"},
+        {"pos": 13, "label": "GND",   "type": "gnd"},
+        {"pos": 14, "label": "GND",   "type": "gnd"},
+        {"pos": 15, "label": "GND",   "type": "gnd"},
+        {"pos": 16, "label": "GND",   "type": "gnd"},
+        {"pos": 17, "label": "GND",   "type": "gnd"},
+        {"pos": 18, "label": "GND",   "type": "gnd"},
+        {"pos": 19, "label": "GND",   "type": "gnd"}
+      ]
+    }
+  ],
+  "peripherals": [
+    {"id": "boot_btn", "gpio": 9, "type": "btn", "x": 50, "y": 188, "label": "BOOT"}
+  ]
+}

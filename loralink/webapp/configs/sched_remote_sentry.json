@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Moisture Check",
+    "type": "READ",
+    "pin": 4,
+    "interval": 600,
+    "duration": 0,
+    "value": 0,
+    "trig_pin": -1,
+    "trig_mode": 0,
+    "thresh": 0,
+    "crit": false
+  },
+  {
+    "name": "Power Sensor",
+    "type": "PULSE",
+    "pin": 36,
+    "interval": 600,
+    "duration": 5,
+    "value": 255,
+    "trig_pin": -1,
+    "trig_mode": 0,
+    "thresh": 0,
+    "crit": false
+  }
+]

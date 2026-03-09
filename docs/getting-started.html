@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Getting Started — LoRaLink Docs</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">›</span>Getting Started</div>
+    <h1>Getting Started</h1>
+    <p>Go from zero to a working LoRaLink mesh in under 10 minutes.</p>
+
+    <h2>Prerequisites</h2>
+    <ul>
+      <li><a href="https://platformio.org/" target="_blank">PlatformIO</a> installed (VS Code extension recommended)</li>
+      <li>Heltec WiFi LoRa 32 V3 board(s)</li>
+      <li>USB-C cable</li>
+    </ul>
+
+    <h2>Install &amp; Flash</h2>
+    <ol class="steps">
+      <li><strong>Clone the repository</strong><br><code>git clone &lt;repo-url&gt;</code></li>
+      <li><strong>Build &amp; upload firmware</strong><br><code>pio run -t upload</code></li>
+      <li><strong>Open serial monitor</strong><br><code>pio device monitor</code></li>
+    </ol>
+
+    <h2>First Boot</h2>
+    <p>On first boot you'll see the OLED display the device name, firmware version, and IP address (if WiFi is configured). The serial console will show all initialization steps.</p>
+    <!-- TODO: Add screenshot of first boot OLED -->
+
+    <h2>Connect to the Dashboard</h2>
+    <p>Navigate to your device's IP in any browser. The web dashboard provides full control: status cards, protocol badges, message log, and command input.</p>
+    <div class="alert alert-info">
+      <div class="alert-title">💡 Tip</div>
+      <p>If you don't know the device IP, check the serial output or OLED display on boot.</p>
+    </div>
+
+    <h2>Send Your First Command</h2>
+    <p>From the serial console or web dashboard, try:</p>
+    <pre><code>LED ON
+STATUS
+BLINK</code></pre>
+    <p>See the <a href="api-reference.html">API Reference</a> for all available commands.</p>
+
+    <h2>Next Steps</h2>
+    <ul>
+      <li><a href="usage-guide.html">Usage Guide</a> — Complete walkthrough of all features</li>
+      <li><a href="hardware.html">Hardware Setup</a> — Wiring relays, sensors, and battery</li>
+      <li><a href="architecture.html">Architecture</a> — How the command pipeline works</li>
+    </ul>
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+{
+  "id": "lilygo_tbeam",
+  "name": "LilyGo T-Beam v1.1",
+  "width": 120,
+  "height": 200,
+  "silkscreen": [
+    {"type": "text", "x": 60, "y": 8,  "label": "LilyGo T-Beam v1.1",  "style": "font-weight:bold; font-size:5px; fill:#fff;"},
+    {"type": "rect", "x": 35, "y": 12, "w": 50, "h": 18, "style": "fill:#0a0a0a; stroke:#444;"},
+    {"type": "text", "x": 60, "y": 23, "label": "ESP32 + AXP192",        "style": "font-size:4px; fill:#888;"},
+    {"type": "rect", "x": 20, "y": 34, "w": 30, "h": 12, "style": "fill:#111; stroke:#2a4a2a;"},
+    {"type": "text", "x": 35, "y": 42, "label": "LoRa SX1276",           "style": "font-size:3.5px; fill:#4a8;"},
+    {"type": "rect", "x": 70, "y": 34, "w": 30, "h": 12, "style": "fill:#111; stroke:#2a2a4a;"},
+    {"type": "text", "x": 85, "y": 42, "label": "GPS NEO-M8N",           "style": "font-size:3.5px; fill:#48a;"}
+  ],
+  "headers": [
+    {
+      "id": "J1",
+      "side": "left",
+      "start_x": 10,
+      "start_y": 50,
+      "pitch": 8,
+      "pins": [
+        {"pos": 1,  "label": "GND",  "type": "gnd"},
+        {"pos": 2,  "label": "3V3",  "type": "pwr"},
+        {"pos": 3,  "label": "G36",  "gpio": 36, "type": "adc"},
+        {"pos": 4,  "label": "G37",  "gpio": 37, "type": "adc"},
+        {"pos": 5,  "label": "G38",  "gpio": 38, "type": "adc"},
+        {"pos": 6,  "label": "G39",  "gpio": 39, "type": "adc"},
+        {"pos": 7,  "label": "G34",  "gpio": 34, "type": "adc"},
+        {"pos": 8,  "label": "G35",  "gpio": 35, "type": "adc"},
+        {"pos": 9,  "label": "G32",  "gpio": 32, "type": "gpio"},
+        {"pos": 10, "label": "G33",  "gpio": 33, "type": "gpio"},
+        {"pos": 11, "label": "G25",  "gpio": 25, "type": "gpio"},
+        {"pos": 12, "label": "G26",  "gpio": 26, "type": "gpio"},
+        {"pos": 13, "label": "G27",  "gpio": 27, "type": "gpio"},
+        {"pos": 14, "label": "G14",  "gpio": 14, "type": "gpio"},
+        {"pos": 15, "label": "G12",  "gpio": 12, "type": "gpio"},
+        {"pos": 16, "label": "G13",  "gpio": 13, "type": "gpio"},
+        {"pos": 17, "label": "G2",   "gpio": 2,  "type": "gpio"},
+        {"pos": 18, "label": "G15",  "gpio": 15, "type": "gpio"},
+        {"pos": 19, "label": "GND",  "type": "gnd"}
+      ]
+    },
+    {
+      "id": "J2",
+      "side": "right",
+      "start_x": 110,
+      "start_y": 50,
+      "pitch": 8,
+      "pins": [
+        {"pos": 1,  "label": "GND",  "type": "gnd"},
+        {"pos": 2,  "label": "3V3",  "type": "pwr"},
+        {"pos": 3,  "label": "EN",   "type": "fix"},
+        {"pos": 4,  "label": "G23",  "gpio": 23, "type": "gpio"},
+        {"pos": 5,  "label": "G22",  "gpio": 22, "type": "gpio"},
+        {"pos": 6,  "label": "G21",  "gpio": 21, "type": "gpio"},
+        {"pos": 7,  "label": "G19",  "gpio": 19, "type": "gpio"},
+        {"pos": 8,  "label": "G18",  "gpio": 18, "type": "gpio"},
+        {"pos": 9,  "label": "G5",   "gpio": 5,  "type": "gpio"},
+        {"pos": 10, "label": "G17",  "gpio": 17, "type": "gpio"},
+        {"pos": 11, "label": "G16",  "gpio": 16, "type": "gpio"},
+        {"pos": 12, "label": "G4",   "gpio": 4,  "type": "gpio"},
+        {"pos": 13, "label": "G0",   "gpio": 0,  "type": "gpio"},
+        {"pos": 14, "label": "5V",   "type": "pwr"},
+        {"pos": 15, "label": "VIN",  "type": "pwr"},
+        {"pos": 16, "label": "VBUS", "type": "pwr"},
+        {"pos": 17, "label": "VBAT", "type": "pwr"},
+        {"pos": 18, "label": "CHG",  "type": "fix"},
+        {"pos": 19, "label": "GND",  "type": "gnd"}
+      ]
+    }
+  ],
+  "peripherals": [
+    {"id": "btn_pwr",  "gpio": 38, "type": "btn", "x": 15,  "y": 185, "label": "PWR BTN"},
+    {"id": "btn_boot", "gpio": 0,  "type": "btn", "x": 105, "y": 185, "label": "BOOT"}
+  ]
+}

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>API Reference — LoRaLink Docs</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">›</span>API Reference</div>
+    <h1>API Reference</h1>
+    <p>Complete reference for REST endpoints, serial commands, and MQTT topics.</p>
+
+    <h2>REST API Endpoints</h2>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td><code>/api/status</code></td><td>Device status (ID, battery, IP, RSSI, uptime)</td></tr>
+        <tr><td>POST</td><td><code>/api/cmd</code></td><td>Send a command — body: <code>{"cmd":"LED ON"}</code></td></tr>
+        <tr><td>GET</td><td><code>/api/peers</code></td><td>List known mesh peers</td></tr>
+        <tr><td>GET</td><td><code>/api/schedule</code></td><td>Get current GPIO schedule</td></tr>
+        <tr><td>POST</td><td><code>/api/schedule</code></td><td>Set GPIO schedule (JSON body)</td></tr>
+        <tr><td>GET</td><td><code>/api/transport</code></td><td>Transport status (BLE, HTTP, peers)</td></tr>
+        <tr><td>POST</td><td><code>/api/rescan</code></td><td>Trigger BLE rescan</td></tr>
+        <tr><td>GET</td><td><code>/api/nodes</code></td><td>List configured nodes</td></tr>
+        <tr><td>POST</td><td><code>/api/nodes</code></td><td>Add a node</td></tr>
+        <tr><td>DELETE</td><td><code>/api/nodes/{id}</code></td><td>Remove a node</td></tr>
+        <tr><td>POST</td><td><code>/api/nodes/clear</code></td><td>Remove all nodes</td></tr>
+        <tr><td>GET</td><td><code>/api/ble/discovered</code></td><td>Last BLE scan results</td></tr>
+        <tr><td>GET</td><td><code>/api/discover</code></td><td>Start network subnet scan</td></tr>
+        <tr><td>GET</td><td><code>/api/discover/results</code></td><td>Get subnet scan results</td></tr>
+        <tr><td>GET</td><td><code>/api/config</code></td><td>Device configuration export</td></tr>
+        <tr><td>POST</td><td><code>/api/config/apply</code></td><td>Apply configuration JSON</td></tr>
+      </tbody>
+    </table>
+    <!-- TODO: Add request/response examples for each endpoint -->
+
+    <h2>Serial Commands</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>LED ON/OFF</code></td><td>Toggle built-in LED</td></tr>
+        <tr><td><code>STATUS</code></td><td>Device status (ID, battery, IP, RSSI)</td></tr>
+        <tr><td><code>BLINK</code></td><td>Flash LED 10 times</td></tr>
+        <tr><td><code>SETNAME &lt;name&gt;</code></td><td>Set device name (1-14 chars)</td></tr>
+        <tr><td><code>SETWIFI &lt;ssid&gt; &lt;pass&gt;</code></td><td>Configure WiFi credentials</td></tr>
+        <tr><td><code>SETIP &lt;ip&gt; / OFF</code></td><td>Static IP or DHCP</td></tr>
+        <tr><td><code>ESPNOW ON/OFF</code></td><td>Enable/disable ESP-NOW</td></tr>
+        <tr><td><code>REPEATER ON/OFF</code></td><td>Enable/disable LoRa repeater</td></tr>
+        <tr><td><code>GPIO &lt;pin&gt; &lt;0/1&gt;</code></td><td>Set GPIO pin state</td></tr>
+        <tr><td><code>READ &lt;pin&gt;</code></td><td>Read GPIO pin</td></tr>
+        <tr><td><code>SLEEP &lt;hours&gt;</code></td><td>Deep sleep (0.01-24h)</td></tr>
+        <tr><td><code>RADIO</code></td><td>Dump LoRa diagnostics</td></tr>
+        <tr><td><code>CONFIG SET &lt;key&gt; &lt;val&gt;</code></td><td>Set NVS config value</td></tr>
+        <tr><td><code>WIPECONFIG</code></td><td>Factory reset all settings</td></tr>
+        <tr><td><code>&lt;target&gt; &lt;cmd&gt;</code></td><td>Send command to specific node</td></tr>
+        <tr><td><code>ALL &lt;cmd&gt;</code></td><td>Broadcast to all nodes</td></tr>
+      </tbody>
+    </table>
+
+    <h2>MQTT Topics</h2>
+    <table>
+      <thead><tr><th>Topic</th><th>Direction</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>loralink/telem/{nodeId}</code></td><td>Publish</td><td>Telemetry data (battery, RSSI, uptime, GPS)</td></tr>
+        <tr><td><code>loralink/status/{nodeId}</code></td><td>Publish</td><td>Online/offline status and metadata</td></tr>
+        <tr><td><code>loralink/msg/{nodeId}</code></td><td>Publish</td><td>Forwarded mesh messages</td></tr>
+        <tr><td><code>loralink/cmd/{nodeId}</code></td><td>Subscribe</td><td>Send command to specific node</td></tr>
+        <tr><td><code>loralink/cmd/all</code></td><td>Subscribe</td><td>Broadcast command to all nodes</td></tr>
+      </tbody>
+    </table>
+    <!-- TODO: Add payload format examples for each topic -->
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SnapEmu Integration — LoRaLink Docs</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">›</span>SnapEmu Integration</div>
+    <h1>SnapEmu Platform &amp; Board Compatibility</h1>
+    <p>Details on extending LoRaLink functionality to Heltec's SnapEmu IoT platform and tracking compatible ESP32 hardware.</p>
+
+    <!-- SECTION 1: SnapEmu Overview -->
+    <h2>1. The SnapEmu Platform Overview</h2>
+    <p><strong>SnapEmu</strong> is an open-source IoT platform developed by Heltec Automation. It is specifically designed to facilitate the integration and management of devices via LoRaWAN and MQTT protocols.</p>
+
+    <p>By integrating LoRaLink with SnapEmu, fleet administrators gain access to:</p>
+    <ul>
+      <li>Advanced fleet visualization and remote device management.</li>
+      <li>Data decoding and long-term telemetry storage.</li>
+      <li>Customizable data analysis web-dashboards and mobile applications.</li>
+    </ul>
+
+    <!-- SECTION 2: Board Compatibility Tracking -->
+    <h2>2. Compatible Hardware &amp; Boards</h2>
+    <p>LoRaLink is natively designed for ESP32 and ESP32-S3 SoCs, ensuring full alignment with Heltec's product line and SnapEmu connectivity.</p>
+
+    <h3>Primary Supported Boards (Native Integration)</h3>
+    <table>
+      <thead><tr><th>Board Name</th><th>SoC Architecture</th><th>Key Features</th><th>SnapEmu Status</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Heltec WiFi LoRa 32 V3</strong></td><td>ESP32-S3</td><td>SX1262 LoRa, OLED, Battery ADC</td><td><span class="text-success">Fully Supported</span></td></tr>
+        <tr><td><strong>Heltec WiFi LoRa 32 V4</strong></td><td>ESP32-S3R2</td><td>Enhanced RAM/Flash, Higher TX Power</td><td><span class="text-success">Fully Supported</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Extended Compatibility</h3>
+    <p>Because LoRaLink is built on the robust ESP32-S3 architecture (featuring native USB, AI acceleration capabilities, and extreme power efficiency), the core logic can be ported to third-party modules. Boards from manufacturers like <strong>Adafruit</strong> and <strong>Waveshare</strong> that utilize the ESP32-S3 are theoretically compatible with LoRaLink and SnapEmu, provided the <code>config.h</code> GPIO map is adjusted for their specific physical layouts.</p>
+
+    <!-- SECTION 3: Integration Architecture -->
+    <h2>3. SnapEmu Integration Architecture</h2>
+
+    <h3>Deployment Methods</h3>
+    <p>SnapEmu provides highly flexible deployment options allowing you to scale from lab testing to vast industrial deployments:</p>
+    <ul>
+      <li><strong>Cloud Hosted:</strong> Connect natively to the public SnapEmu platform.</li>
+      <li><strong>Local / Edge Compute:</strong> Run a local SnapEmu instance via Docker on local servers, edge devices, or a Raspberry Pi.</li>
+    </ul>
+
+    <h3>MQTT Handshake</h3>
+    <p>To proxy LoRaLink data into SnapEmu, the device's internal <code>MQTTManager</code> bridges to the SnapEmu instance.</p>
+    <pre><code>// Integration happens transparently through standard MQTT
+{"topic": "snapemu/telemetry/{dev_name}", "payload": {"temp": 24.5, "rssi": -92}}</code></pre>
+
+    <div class="alert alert-info">
+      <div class="alert-title">🔗 Docker Deployment Note</div>
+      <p>If you choose to run SnapEmu locally alongside LoRaLink's <code>mqttdocker.yml</code> stack, ensure that your MQTT broker (EMQX) forwards relevant telemetry topics to the SnapEmu ingestion engine, or point the Heltec node's <code>mqtt_srv</code> directly to the SnapEmu host IP.</p>
+    </div>
+
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

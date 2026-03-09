@@ -1,0 +1,225 @@
+[
+  {
+    "name": "Basic Ping-Pong",
+    "expectations": [
+      {
+        "device": "A",
+        "type": "TX",
+        "data": "PING"
+      },
+      {
+        "device": "B",
+        "type": "RX",
+        "data": "PING"
+      },
+      {
+        "device": "B",
+        "type": "TX",
+        "data": "PONG"
+      },
+      {
+        "device": "A",
+        "type": "RX",
+        "data": "PONG"
+      }
+    ]
+  },
+  {
+    "name": "Sensor Telemetry",
+    "expectations": [
+      {
+        "device": "B",
+        "type": "TX",
+        "data": "STATUS"
+      },
+      {
+        "device": "A",
+        "type": "RX",
+        "data": "STATUS"
+      }
+    ]
+  },
+  {
+    "name": "PWM Control Loop",
+    "expectations": [
+      {
+        "device": "A",
+        "type": "TX",
+        "data": "PWM"
+      },
+      {
+        "device": "B",
+        "type": "RX",
+        "data": "PWM"
+      }
+    ]
+  },
+  {
+    "name": "PubSub Subscribe & Publish",
+    "expectations": [
+      {
+        "device": "A",
+        "type": "TX",
+        "data": "SUB:sensors/temp"
+      },
+      {
+        "device": "B",
+        "type": "RX",
+        "data": "SUB:sensors/temp"
+      },
+      {
+        "device": "B",
+        "type": "TX",
+        "data": "PUB:sensors/temp:24.5"
+      },
+      {
+        "device": "A",
+        "type": "RX",
+        "data": "PUB:sensors/temp:24.5"
+      }
+    ]
+  },
+  {
+    "name": "PubSub Command & Ack",
+    "expectations": [
+      {
+        "device": "A",
+        "type": "TX",
+        "data": "PUB:cmd/relay/1:ON"
+      },
+      {
+        "device": "B",
+        "type": "RX",
+        "data": "PUB:cmd/relay/1:ON"
+      },
+      {
+        "device": "B",
+        "type": "TX",
+        "data": "ACK:cmd/relay/1"
+      },
+      {
+        "device": "A",
+        "type": "RX",
+        "data": "ACK:cmd/relay/1"
+      }
+    ]
+  },
+  {
+    "name": "PubSub Error Handle",
+    "expectations": [
+      {
+        "device": "A",
+        "type": "TX",
+        "data": "PUB:cmd/invalid:do"
+      },
+      {
+        "device": "B",
+        "type": "RX",
+        "data": "PUB:cmd/invalid:do"
+      },
+      {
+        "device": "B",
+        "type": "TX",
+        "data": "ERR:cmd/invalid:unknown"
+      },
+      {
+        "device": "A",
+        "type": "RX",
+        "data": "ERR:cmd/invalid:unknown"
+      }
+    ]
+  },
+  {
+    "name": "Saturation Test",
+    "expectations": [
+      {
+        "device": "A",
+        "type": "TX",
+        "data": "PUB:test/saturate:0"
+      },
+      {
+        "device": "B",
+        "type": "RX",
+        "data": "PUB:test/saturate:0"
+      },
+      {
+        "device": "A",
+        "type": "TX",
+        "data": "PUB:test/saturate:1"
+      },
+      {
+        "device": "B",
+        "type": "RX",
+        "data": "PUB:test/saturate:1"
+      },
+      {
+        "device": "A",
+        "type": "TX",
+        "data": "PUB:test/saturate:2"
+      },
+      {
+        "device": "B",
+        "type": "RX",
+        "data": "PUB:test/saturate:2"
+      },
+      {
+        "device": "A",
+        "type": "TX",
+        "data": "PUB:test/saturate:3"
+      },
+      {
+        "device": "B",
+        "type": "RX",
+        "data": "PUB:test/saturate:3"
+      },
+      {
+        "device": "A",
+        "type": "TX",
+        "data": "PUB:test/saturate:4"
+      },
+      {
+        "device": "B",
+        "type": "RX",
+        "data": "PUB:test/saturate:4"
+      },
+      {
+        "device": "A",
+        "type": "TX",
+        "data": "PUB:test/saturate:5"
+      },
+      {
+        "device": "B",
+        "type": "RX",
+        "data": "PUB:test/saturate:5"
+      }
+    ]
+  },
+  {
+    "name": "Security Handshake",
+    "expectations": [
+      { "device": "A", "type": "TX", "data": "SEC:KEY_REQ" },
+      { "device": "B", "type": "RX", "data": "SEC:KEY_REQ" },
+      { "device": "B", "type": "TX", "data": "SEC:CHALLENGE:" },
+      { "device": "A", "type": "RX", "data": "SEC:CHALLENGE:" },
+      { "device": "A", "type": "TX", "data": "SEC:RESPONSE:" },
+      { "device": "B", "type": "RX", "data": "SEC:RESPONSE:" },
+      { "device": "B", "type": "TX", "data": "SEC:VERIFIED" },
+      { "device": "A", "type": "RX", "data": "SEC:VERIFIED" }
+    ]
+  },
+  {
+    "name": "FOTA Progress",
+    "expectations": [
+      { "device": "A", "type": "TX", "data": "FOTA:START" },
+      { "device": "B", "type": "RX", "data": "FOTA:START" },
+      { "device": "A", "type": "TX", "data": "FOTA:CHUNK:0" },
+      { "device": "B", "type": "RX", "data": "FOTA:CHUNK:0" },
+      { "device": "A", "type": "TX", "data": "FOTA:CHUNK:1" },
+      { "device": "B", "type": "RX", "data": "FOTA:CHUNK:1" },
+      { "device": "A", "type": "TX", "data": "FOTA:FINISH" },
+      { "device": "B", "type": "RX", "data": "FOTA:FINISH" },
+      { "device": "B", "type": "TX", "data": "FOTA:CRC_OK" },
+      { "device": "A", "type": "RX", "data": "FOTA:CRC_OK" }
+    ]
+  }
+]

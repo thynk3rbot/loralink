@@ -1,0 +1,15 @@
+[
+  {
+    "name": "MASTER",
+    "type": "LORA_TX",
+    "pin": "7",
+    "interval": 30000,
+    "duration": 5000,
+    "value": 0,
+    "enabled": true,
+    "state": 0,
+    "nextRun": 29710,
+    "updatedBy": "WiFi",
+    "lastUpdated": "0h 8m"
+  }
+]

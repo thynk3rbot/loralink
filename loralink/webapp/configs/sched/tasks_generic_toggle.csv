@@ -1,0 +1,4 @@
+Name,Type,Pin,Interval,Duration,Enabled
+Heartbeat,TOGGLE,LED,2,0,1
+MainRelay_Test,PULSE,RL12_2,30,5,0
+PowerCycle,TOGGLE,RL12_3,60,0,0

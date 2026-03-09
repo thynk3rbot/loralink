@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Provisioning & Reliability — LoRaLink Docs</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">›</span>Provisioning &amp; Reliability</div>
+    <h1>Provisioning &amp; Network Reliability</h1>
+    <p>A comprehensive guide on OEM configuration, bulk production flashing, system verification, and the mechanisms keeping devices connected.</p>
+
+    <!-- SECTION 1: System Verification -->
+    <h2>1. System Verification (The Ping/Pong Cycle)</h2>
+    <p>Once a device is configured, it's crucial to verify its hardware capabilities and telemetry routing are functioning correctly over the Swarm network.</p>
+
+    <h3>The Heartbeat Task</h3>
+    <p>To ensure a node's Task Scheduler is alive without throwing high-voltage relays, the system relies on a non-destructive <strong>Heartbeat Task</strong>. By default, the firmware maps the orange built-in LED (Pin 35) to a recurring toggle event every 2 seconds. If the node is powered and the scheduler hasn't crashed, this LED will pulse.</p>
+
+    <h3>Ping/Pong Telemetry Validation</h3>
+    <p>Using the Swarm Dashboard or a Serial Terminal, sending a `PING` command forces a complete traversal of the network stack:</p>
+    <ol>
+      <li><strong>Command Arrival:</strong> The device receives the MQTT/Serial payload `PING`.</li>
+      <li><strong>Command Parsing:</strong> The `CommandManager` identifies the explicit keyword.</li>
+      <li><strong>Payload Response:</strong> The device constructs a binary `MessagePacket` with the payload `Pong` and injects it back through the `MQTTManager` or `LoRaManager`.</li>
+      <li><strong>Dashboard Feedback:</strong> A successful round-trip guarantees both RX and TX pipes are structurally sound.</li>
+    </ol>
+
+    <!-- SECTION 2: Network Persistence & Reliability -->
+    <h2>2. Network Persistence &amp; Reconnect Logic</h2>
+    <p>Industrial IoT requires edge devices to gracefully handle network failures, brownouts, and physical interference.</p>
+
+    <h3>The Reconnect Loop</h3>
+    <div class="alert alert-info">
+      <div class="alert-title">🔄 Non-Blocking Reconnects</div>
+      <p>LoRaLink utilizes an asynchronous, non-blocking state machine in `WiFiManager` and `MQTTManager`. If a connection drops, the device does <strong>not</strong> freeze in a `while()` loop; it schedules connection attempts every 5-10 seconds, allowing local tasks (relays/sensors) to proceed uninterrupted.</p>
+    </div>
+
+    <h3>NVS State Saves</h3>
+    <p>To survive hard power loss, physical pin states are flushed to identical `lora_hw` keys in Non-Volatile Storage (NVS). When the device reboots, its `DataManager` accesses the namespace and automatically reapplies the last known state to the physical GPIO headers.</p>
+
+    <h3>Watchdog Timers (WDT)</h3>
+    <p>The ESP32-S3 utilizes Hardware and Software Watchdogs. If a poorly written custom task blocks the CPU for more than 3000ms, the system intentionally "panics" and restarts the node to reset the environment.</p>
+
+    <!-- SECTION 3: OEM Configuration & Bulk Flashing -->
+    <h2>3. OEM Configuration vs. Bulk Production Flashing</h2>
+    <p>For manufacturers looking to build product lines on top of LoRaLink, two distinct stages occur: <strong>OEM Scaffolding</strong> and <strong>Bulk Flashing</strong>.</p>
+
+    <h3>Phase A: OEM Configuration (The Gold Standard)</h3>
+    <p>The goal is to generate a "Gold Master" CSV or JSON configuration file representing the finished product's capabilities.</p>
+    <ul>
+      <li>Connect a fresh board to the Fleet Admin PC via USB.</li>
+      <li>Via the <strong>Admin &rarr; Device Settings</strong> tab, rename pins to match the chassis (e.g., Pin 5 becomes "Main_Pump").</li>
+      <li>Toggle `hw_registry` bits if adding an OLED or secondary modules.</li>
+      <li>Click <strong>Export Config</strong>. You now possess an immutable `heltec_product_A.json` file.</li>
+    </ul>
+
+    <h3>Phase B: Bulk Production Flashing</h3>
+    <p>Once you possess the "Gold Master", the objective shifts to copying it onto 100+ devices rapidly on an assembly line.</p>
+
+    <p>Rather than using the WebApp click-interface, operators should use the NVS Partition Image Generator to construct a binary block of NVS data containing the JSON mappings.</p>
+
+    <pre><code># Generates custom partition bin
+python tools/nvs_generator.py heltec_product_A.json my_nvs.bin
+
+# Flashes firmware AND config in one command
+esptool.py --port COM7 write_flash 0x10000 firmware.bin 0x210000 my_nvs.bin</code></pre>
+
+    <div class="alert alert-warn">
+      <div class="alert-title">⚠️ Individual Provisioning</div>
+      <p>Even though Bulk Flashing sets all settings perfectly, it duplicates the `loralink:dev_name`. For large swarms, ensure each device is booted at least once to assign a unique suffix (e.g., `Node-A1`, `Node-A2`), or seed the UUID via the ESP32 MAC address upon first boot.</p>
+    </div>
+
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

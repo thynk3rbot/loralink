@@ -1,0 +1,48 @@
+{
+  "_schema": "loralink-schedule-v1",
+  "_device": "heltec_v3_farm_automation",
+  "schedules": [
+    {
+      "name": "IrrigationCycle",
+      "type": "PULSE",
+      "pin": "IrrigationPump",
+      "interval": 86400,
+      "duration": 1800,
+      "enabled": true,
+      "_comment": "Water once per day for 30 minutes (86400s = 24h, 1800s = 30min)"
+    },
+    {
+      "name": "SystemHeartbeat",
+      "type": "TOGGLE",
+      "pin": "LED",
+      "interval": 10,
+      "enabled": true,
+      "_comment": "Confirm system alive every 10 seconds"
+    },
+    {
+      "name": "GrowhouseHeating",
+      "type": "TOGGLE",
+      "pin": "Heater",
+      "interval": 300,
+      "enabled": false,
+      "_comment": "Temperature control check every 5min — requires DHT integration, disabled until configured"
+    },
+    {
+      "name": "NightLighting",
+      "type": "TOGGLE",
+      "pin": "GrowLight",
+      "interval": 3600,
+      "enabled": false,
+      "_comment": "Extend daylight hours — disabled, requires time-based automation"
+    },
+    {
+      "name": "SensorPowerCycle",
+      "type": "PULSE",
+      "pin": "VEXT",
+      "interval": 600,
+      "duration": 2,
+      "enabled": false,
+      "_comment": "Power cycle external sensors every 10min to trigger ADC readings"
+    }
+  ]
+}

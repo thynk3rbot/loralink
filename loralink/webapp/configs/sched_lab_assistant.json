@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Manual Blink",
+    "type": "TOGGLE",
+    "pin": 35,
+    "interval": 0,
+    "duration": 0,
+    "value": 0,
+    "trig_pin": 0,
+    "trig_mode": 3,
+    "thresh": 0,
+    "crit": false
+  }
+]

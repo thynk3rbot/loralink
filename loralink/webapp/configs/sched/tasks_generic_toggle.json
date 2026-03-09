@@ -1,0 +1,31 @@
+{
+  "_schema": "loralink-schedule-v1",
+  "_device": "heltec_v3_generic",
+  "schedules": [
+    {
+      "name": "Heartbeat",
+      "type": "TOGGLE",
+      "pin": "LED",
+      "interval": 2,
+      "enabled": true,
+      "_comment": "Visual heartbeat every 2 seconds"
+    },
+    {
+      "name": "MainRelay_Test",
+      "type": "PULSE",
+      "pin": "RL12_2",
+      "interval": 30,
+      "duration": 5,
+      "enabled": false,
+      "_comment": "Test relay activation every 30s, 5s pulse — disabled by default for safety"
+    },
+    {
+      "name": "PowerCycle",
+      "type": "TOGGLE",
+      "pin": "RL12_3",
+      "interval": 60,
+      "enabled": false,
+      "_comment": "External power control toggle — disabled by default"
+    }
+  ]
+}

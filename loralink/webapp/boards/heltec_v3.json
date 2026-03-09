@@ -1,0 +1,71 @@
+{
+  "id": "heltec_v3",
+  "name": "Heltec WiFi LoRa 32 V3",
+  "width": 100,
+  "height": 180,
+  "silkscreen": [
+    {"type": "text", "x": 50, "y": 10, "label": "LoRaLink HT-LoRa", "style": "font-weight:bold; font-size: 6px; fill:#fff;"},
+    {"type": "rect", "x": 20, "y": 30, "w": 60, "h": 15, "label": "OLED Display", "style": "fill:#111; stroke:#333;"},
+    {"type": "rect", "x": 40, "y": 165, "w": 20, "h": 12, "label": "USB-C", "style": "fill:#444;"}
+  ],
+  "headers": [
+    {
+      "id": "J3",
+      "side": "left",
+      "start_x": 10,
+      "start_y": 50,
+      "pitch": 7,
+      "pins": [
+        {"pos": 1, "label": "GND", "type": "gnd"},
+        {"pos": 2, "label": "3V3", "type": "pwr"},
+        {"pos": 3, "label": "3V3", "type": "pwr"},
+        {"pos": 4, "label": "G37", "gpio": 37, "type": "adc"},
+        {"pos": 5, "label": "G46", "gpio": 46, "type": "gpio"},
+        {"pos": 6, "label": "G45", "gpio": 45, "type": "gpio"},
+        {"pos": 7, "label": "G42", "gpio": 42, "type": "gpio"},
+        {"pos": 8, "label": "G41", "gpio": 41, "type": "gpio"},
+        {"pos": 9, "label": "G40", "gpio": 40, "type": "gpio"},
+        {"pos": 10, "label": "G39", "gpio": 39, "type": "gpio"},
+        {"pos": 11, "label": "G38", "gpio": 38, "type": "gpio"},
+        {"pos": 12, "label": "G1", "gpio": 1, "type": "adc"},
+        {"pos": 13, "label": "G2", "gpio": 2, "type": "adc"},
+        {"pos": 14, "label": "G3", "gpio": 3, "type": "adc"},
+        {"pos": 15, "label": "G4", "gpio": 4, "type": "adc"},
+        {"pos": 16, "label": "G5", "gpio": 5, "type": "adc"},
+        {"pos": 17, "label": "G6", "gpio": 6, "type": "adc"},
+        {"pos": 18, "label": "G7", "gpio": 7, "type": "gpio"}
+      ]
+    },
+    {
+      "id": "J2",
+      "side": "right",
+      "start_x": 90,
+      "start_y": 50,
+      "pitch": 7,
+      "pins": [
+        {"pos": 1, "label": "GND", "type": "gnd"},
+        {"pos": 2, "label": "5V", "type": "pwr"},
+        {"pos": 3, "label": "VBAT", "type": "pwr"},
+        {"pos": 4, "label": "VEXT", "type": "pwr"},
+        {"pos": 5, "label": "G18", "gpio": 18, "type": "gpio"},
+        {"pos": 6, "label": "G17", "gpio": 17, "type": "gpio"},
+        {"pos": 7, "label": "G21", "gpio": 21, "type": "gpio"},
+        {"pos": 8, "label": "G26", "gpio": 26, "type": "gpio"},
+        {"pos": 9, "label": "G33", "gpio": 33, "type": "gpio"},
+        {"pos": 10, "label": "G34", "gpio": 34, "type": "gpio"},
+        {"pos": 11, "label": "G35", "gpio": 35, "type": "gpio"},
+        {"pos": 12, "label": "G36", "gpio": 36, "type": "gpio"},
+        {"pos": 13, "label": "G48", "gpio": 48, "type": "gpio"},
+        {"pos": 14, "label": "G47", "gpio": 47, "type": "gpio"},
+        {"pos": 15, "label": "G14", "gpio": 14, "type": "gpio"},
+        {"pos": 16, "label": "G13", "gpio": 13, "type": "gpio"},
+        {"pos": 17, "label": "G12", "gpio": 12, "type": "gpio"},
+        {"pos": 18, "label": "G11", "gpio": 11, "type": "gpio"}
+      ]
+    }
+  ],
+  "peripherals": [
+    {"id": "led", "gpio": 35, "type": "led", "x": 30, "y": 20, "label": "Orange LED"},
+    {"id": "user_btn", "gpio": 0, "type": "btn", "x": 80, "y": 20, "label": "PRG"}
+  ]
+}

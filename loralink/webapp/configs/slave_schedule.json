@@ -1,0 +1,28 @@
+[
+  {
+    "name": "MASTER",
+    "type": "LORA_TX",
+    "pin": "7",
+    "interval": 4230196,
+    "duration": 705032,
+    "value": 0,
+    "enabled": true,
+    "state": 0,
+    "nextRun": 0,
+    "updatedBy": "WiFi",
+    "lastUpdated": "0h 8m"
+  },
+  {
+    "name": "TestBlink",
+    "type": "TOGGLE",
+    "pin": "5",
+    "interval": 1000000,
+    "duration": 5000,
+    "value": 0,
+    "enabled": true,
+    "state": 0,
+    "nextRun": 971788,
+    "updatedBy": "WEB",
+    "lastUpdated": "1h 47m"
+  }
+]

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Hardware — LoRaLink Docs</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">›</span>Hardware</div>
+    <h1>Hardware Setup</h1>
+    <p>Bill of materials, pinout, wiring guide, and power considerations.</p>
+
+    <h2>Bill of Materials</h2>
+    <table>
+      <thead><tr><th>Component</th><th>Spec</th><th>~Cost</th></tr></thead>
+      <tbody>
+        <tr><td>MCU Board</td><td>Heltec WiFi LoRa 32 V3 (ESP32-S3)</td><td>$18</td></tr>
+        <tr><td>Radio</td><td>SX1262, 915 MHz, 10 dBm</td><td>Included</td></tr>
+        <tr><td>Display</td><td>128×64 OLED (SSD1306, I2C)</td><td>Included</td></tr>
+        <tr><td>Relay Module</td><td>4-channel (1× 110V, 3× 12V)</td><td>$5–8</td></tr>
+        <tr><td>Sensor</td><td>DHT22 (temp/humidity)</td><td>$3</td></tr>
+        <tr><td>Battery</td><td>3.7V LiPo (ADC-monitored)</td><td>$5–10</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Pinout</h2>
+    <table>
+      <thead><tr><th>Pin</th><th>Function</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>5</td><td>Relay 1 (110V)</td><td>HIGH = ON</td></tr>
+        <tr><td>46</td><td>Relay 2 (12V)</td><td>HIGH = ON</td></tr>
+        <tr><td>6</td><td>Relay 3 (12V)</td><td>HIGH = ON</td></tr>
+        <tr><td>7</td><td>Relay 4 (12V)</td><td>HIGH = ON</td></tr>
+        <tr><td>35</td><td>LED</td><td>Built-in indicator</td></tr>
+        <tr><td>15</td><td>DHT22 Data</td><td>VExt powered</td></tr>
+        <tr><td>36</td><td>VExt Control</td><td>External sensor power</td></tr>
+        <tr><td>1</td><td>Battery ADC</td><td>Voltage divider</td></tr>
+      </tbody>
+    </table>
+    <img src="media/Heltec_pinmap.png" alt="Heltec WiFi LoRa 32 V3 Pinout" style="max-width:100%;border-radius:8px;border:1px solid var(--border);margin:1rem 0">
+
+    <h3>Pin &amp; Technical Diagrams</h3>
+    <img src="media/pin_diagram.png" alt="LoRaLink Pin Diagram" style="max-width:100%;border-radius:8px;border:1px solid var(--border);margin:0.5rem 0">
+    <img src="media/technical_diagram.png" alt="LoRaLink Technical Diagram" style="max-width:100%;border-radius:8px;border:1px solid var(--border);margin:0.5rem 0">
+
+    <h2>Battery Management</h2>
+    <ul>
+      <li><strong>&gt;3.7V</strong> — Normal operation, all features enabled</li>
+      <li><strong>3.4V–3.6V</strong> — Low power warning, WiFi TX throttled</li>
+      <li><strong>&lt;3.4V</strong> — Critical shutdown, all relays forced LOW</li>
+    </ul>
+
+    <h2>Power Considerations</h2>
+    <div class="alert alert-warn">
+      <div class="alert-title">⚠️ Safety</div>
+      <p>Relays default to LOW on boot. VExt power is only active during sensor measurement cycles to conserve energy.</p>
+    </div>
+
+    <hr>
+
+    <h2>Satellite Extended GPIO (MCP23017)</h2>
+    <p>The MCP23017 is a 16-channel I2C GPIO expander. It shares the Heltec V3's existing I2C bus (OLED at <code>0x3C</code>), expanding available GPIO by up to <strong>128 additional pins</strong> via daisy-chaining up to 8 expanders.</p>
+
+    <h3>Wiring Configuration</h3>
+    <table>
+      <thead><tr><th>Component</th><th>MCP23017 Pin</th><th>Heltec V3 GPIO</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>I2C SDA</td><td>Pin 13</td><td>GPIO 17</td><td>Shared with OLED display</td></tr>
+        <tr><td>I2C SCL</td><td>Pin 12</td><td>GPIO 18</td><td>Shared with OLED display</td></tr>
+        <tr><td>Power (3.3V)</td><td>Pin 9</td><td>3.3V</td><td></td></tr>
+        <tr><td>Ground</td><td>Pin 10</td><td>GND</td><td></td></tr>
+        <tr><td>Reset</td><td>Pin 18</td><td>3.3V</td><td>Pull-up (never drive LOW)</td></tr>
+        <tr><td>Address A0/A1/A2</td><td>Pins 15-17</td><td>GND or 3.3V</td><td>Sets I2C address 0x20–0x27</td></tr>
+      </tbody>
+    </table>
+    <div class="alert alert-info">
+      <div class="alert-title">💡 No Address Conflict</div>
+      <p>The OLED uses <code>0x3C</code>. MCP23017 default (all address pins LOW) is <code>0x20</code>. No conflict.</p>
+    </div>
+
+    <h3>Multi-Expander Addressing</h3>
+    <p>Up to 8 MCP23017 chips can share the same bus by setting address pins differently:</p>
+    <table>
+      <thead><tr><th>Address</th><th>A2</th><th>A1</th><th>A0</th></tr></thead>
+      <tbody>
+        <tr><td><code>0x20</code></td><td>LOW</td><td>LOW</td><td>LOW</td></tr>
+        <tr><td><code>0x21</code></td><td>LOW</td><td>LOW</td><td>HIGH</td></tr>
+        <tr><td><code>0x22</code></td><td>LOW</td><td>HIGH</td><td>LOW</td></tr>
+        <tr><td><code>0x23</code></td><td>LOW</td><td>HIGH</td><td>HIGH</td></tr>
+        <tr><td>… up to</td><td></td><td></td><td></td></tr>
+        <tr><td><code>0x27</code></td><td>HIGH</td><td>HIGH</td><td>HIGH</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Firmware Integration</h3>
+    <div class="alert alert-danger">
+      <div class="alert-title">⚠️ Critical</div>
+      <p>Do <strong>NOT</strong> call <code>Wire.begin()</code> again in the MCP23017 init — the Heltec SDK already initializes I2C for the OLED during <code>Heltec.begin()</code>. Calling it again will glitch the display.</p>
+    </div>
+    <pre><code>#include &lt;Adafruit_MCP23X17.h&gt;
+
+Adafruit_MCP23X17 mcp;
+
+void initMCP23017() {
+  // Wire already initialized by Heltec SDK on GPIO 17 (SDA) / 18 (SCL)
+  if (!mcp.begin_I2C(0x20)) {
+    Serial.println("MCP23017: NOT FOUND at 0x20");
+    return;
+  }
+  Serial.println("MCP23017: Initialized OK");
+
+  // GPA0-GPA7 as outputs (relay bank)
+  for (int i = 0; i &lt; 8; i++) {
+    mcp.pinMode(i, OUTPUT);
+    mcp.digitalWrite(i, LOW);
+  }
+  // GPB0-GPB7 as inputs with pullups (sensors)
+  for (int i = 8; i &lt; 16; i++) {
+    mcp.pinMode(i, INPUT_PULLUP);
+  }
+}</code></pre>
+
+    <h3>PlatformIO Dependency</h3>
+    <pre><code>lib_deps =
+    ; ... existing entries ...
+    adafruit/Adafruit MCP23017 Arduino Library @ ^2.3.0</code></pre>
+
+    <h3>Extended Pin Naming</h3>
+    <p>MCP pins use the naming scheme <code>PIN_MCP_&lt;expander&gt;_&lt;pin&gt;</code>:</p>
+    <pre><code>PIN_MCP_0_4  →  Expander #0 (0x20), GPA4
+PIN_MCP_1_12 →  Expander #1 (0x21), GPB4</code></pre>
+    <p>This integrates with the existing <code>getPinFromName()</code> abstraction in CommandManager/DataManager.</p>
+
+    <h3>Interrupt Wiring (Event-Driven)</h3>
+    <p>Wire MCP23017 <code>INTA</code> → any free ESP32 GPIO (e.g. GPIO 38) for ISR-driven change detection:</p>
+    <pre><code>pinMode(38, INPUT_PULLUP);
+attachInterrupt(38, mcpInterruptHandler, FALLING);</code></pre>
+    <!-- TODO: Add physical wiring photos and breadboard layout -->
+
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

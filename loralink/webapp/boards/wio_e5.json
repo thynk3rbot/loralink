@@ -1,0 +1,53 @@
+{
+  "id": "wio_e5",
+  "name": "Seeed Wio-E5 (STM32WLE5)",
+  "width": 100,
+  "height": 130,
+  "silkscreen": [
+    {"type": "text", "x": 50, "y": 8,  "label": "Seeed Wio-E5",         "style": "font-weight:bold; font-size:5px; fill:#fff;"},
+    {"type": "rect", "x": 28, "y": 13, "w": 44, "h": 14, "style": "fill:#0a1020; stroke:#2244aa;"},
+    {"type": "text", "x": 50, "y": 22, "label": "STM32WLE5JC + LoRa",   "style": "font-size:3.5px; fill:#448;"},
+    {"type": "rect", "x": 40, "y": 115, "w": 20, "h": 10, "style": "fill:#333; stroke:#555;"},
+    {"type": "text", "x": 50, "y": 122, "label": "USB-C",               "style": "font-size:3.5px; fill:#888;"}
+  ],
+  "headers": [
+    {
+      "id": "J5",
+      "side": "left",
+      "start_x": 10,
+      "start_y": 32,
+      "pitch": 9,
+      "pins": [
+        {"pos": 1,  "label": "3V3",  "type": "pwr"},
+        {"pos": 2,  "label": "GND",  "type": "gnd"},
+        {"pos": 3,  "label": "PA2",  "gpio": 2,  "type": "gpio"},
+        {"pos": 4,  "label": "PA3",  "gpio": 3,  "type": "gpio"},
+        {"pos": 5,  "label": "PA4",  "gpio": 4,  "type": "gpio"},
+        {"pos": 6,  "label": "PA5",  "gpio": 5,  "type": "gpio"},
+        {"pos": 7,  "label": "PA6",  "gpio": 6,  "type": "gpio"},
+        {"pos": 8,  "label": "PA7",  "gpio": 7,  "type": "gpio"},
+        {"pos": 9,  "label": "PB8",  "gpio": 8,  "type": "gpio"},
+        {"pos": 10, "label": "PB9",  "gpio": 9,  "type": "gpio"}
+      ]
+    },
+    {
+      "id": "J4",
+      "side": "right",
+      "start_x": 90,
+      "start_y": 32,
+      "pitch": 9,
+      "pins": [
+        {"pos": 1,  "label": "GND",   "type": "gnd"},
+        {"pos": 2,  "label": "NRST",  "type": "fix"},
+        {"pos": 3,  "label": "BOOT0", "type": "fix"},
+        {"pos": 4,  "label": "PA0",   "gpio": 0,  "type": "adc"},
+        {"pos": 5,  "label": "PA1",   "gpio": 1,  "type": "adc"},
+        {"pos": 6,  "label": "PB3",   "gpio": 11, "type": "gpio"},
+        {"pos": 7,  "label": "PB4",   "gpio": 12, "type": "gpio"},
+        {"pos": 8,  "label": "PB5",   "gpio": 13, "type": "gpio"},
+        {"pos": 9,  "label": "PB10",  "gpio": 14, "type": "gpio"},
+        {"pos": 10, "label": "PB11",  "gpio": 15, "type": "gpio"}
+      ]
+    }
+  ]
+}

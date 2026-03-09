@@ -1,0 +1,32 @@
+{
+  "schema": "1.0",
+  "hardware_id": "Heltec ESP32 LoRa V3",
+  "settings": {
+    "dev_name": "SENTRY-ALPHA",
+    "wifi_ssid": "spw1-5g",
+    "wifi_pass": "OPTMyxlpyx99!",
+    "static_ip": "",
+    "gateway": "",
+    "subnet": "",
+    "repeater": false,
+    "mqtt_en": false,
+    "mqtt_srv": "",
+    "mqtt_prt": 1883,
+    "mqtt_usr": "",
+    "mqtt_pwd": "",
+    "espnow_en": true,
+    "wifi_en": false,
+    "ble_en": true,
+    "crypto_key": "11223344556677889900AABBCCDDEEFF"
+  },
+  "pins": {
+    "35": { "name": "HB_LED", "en": true },
+    "1": { "name": "BATT_V", "en": true },
+    "4": { "name": "SOIL_MOIST", "en": true },
+    "36": { "name": "SENSOR_PWR", "en": true }
+  },
+  "_comments": {
+    "purpose": "Low-power field telemetry node",
+    "setup": "WiFi disabled to save power; uses LoRa/ESP-NOW for reporting"
+  }
+}

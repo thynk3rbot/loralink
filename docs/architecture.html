@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Architecture — LoRaLink Docs</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">›</span>Architecture</div>
+    <h1>System Architecture</h1>
+    <p>How LoRaLink routes commands between any interface through a unified pipeline.</p>
+
+    <h2>CommandManager</h2>
+    <p>The central routing engine accepts commands from any interface and dispatches them to any target:</p>
+    <div class="diagram">Serial ─┐
+LoRa ───┤                  ┌──▶ Local GPIO / Relay / Display
+BLE ────┼──▶ CommandManager ┤
+WiFi ───┤                  └──▶ Forward to Mesh (LoRa, ESP-NOW, BLE)
+ESP-NOW ┘</div>
+    <!-- TODO: Add interactive diagram or SVG version -->
+
+    <h2>Protocol Routing</h2>
+    <p>Every protocol speaks the same command language. Routing is prefix-based:</p>
+    <ul>
+      <li><code>NODE2 LED ON</code> — Reaches a specific device</li>
+      <li><code>ALL STATUS</code> — Broadcasts to entire mesh</li>
+      <li>No prefix — Executes locally</li>
+    </ul>
+
+    <h2>Transport Mnemonics</h2>
+    <table>
+      <thead><tr><th>Mode</th><th>Format</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td><code>J</code></td><td>JSON</td><td>WebApp widgets, REST API</td></tr>
+        <tr><td><code>C</code></td><td>CSV</td><td>High-speed logging</td></tr>
+        <tr><td><code>K</code></td><td>Key-Value</td><td>Terminal debugging</td></tr>
+        <tr><td><code>B</code></td><td>Binary</td><td>Maximum range, lowest airtime</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Mesh Topology</h2>
+    <ul>
+      <li><strong>TTL-Based Routing</strong> — Up to 3 hops</li>
+      <li><strong>Seen-Message Dedup</strong> — Prevents routing loops</li>
+      <li><strong>ACK + Retry</strong> — Reliable delivery with configurable retries</li>
+    </ul>
+    <!-- TODO: Add mesh topology diagram -->
+
+    <h2>Scheduler Discipline</h2>
+    <table>
+      <thead><tr><th>Priority</th><th>Level</th><th>Tasks</th></tr></thead>
+      <tbody>
+        <tr><td>0 (Immediate)</td><td>Critical</td><td>LoRa radio interrupts</td></tr>
+        <tr><td>1 (High)</td><td>Sync</td><td>Slotted pulse response</td></tr>
+        <tr><td>2 (Normal)</td><td>Background</td><td>OLED, DHT, Battery, scheduled GPIO</td></tr>
+      </tbody>
+    </table>
+    <!-- TODO: Expand with master-slave hierarchy and AVRC details -->
+
+    <h2>Master-Slave Hierarchy</h2>
+    <p>The PC/WebApp acts as the Master node (source of truth), broadcasting sync frames every 5 minutes. Slave nodes execute local tasks but yield to Master commands immediately.</p>
+    <!-- TODO: Expand with sync protocol details -->
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Heartbeat",
+    "type": "PULSE",
+    "pin": 35,
+    "interval": 2,
+    "duration": 0,
+    "value": 255,
+    "trig_pin": -1,
+    "trig_mode": 0,
+    "thresh": 0,
+    "crit": false
+  },
+  {
+    "name": "Safety Stop",
+    "type": "TOGGLE",
+    "pin": 6,
+    "interval": 0,
+    "duration": 0,
+    "value": 0,
+    "trig_pin": 20,
+    "trig_mode": 1,
+    "thresh": 0,
+    "crit": true
+  }
+]

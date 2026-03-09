@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Universal IO Scheduler</title>
+    <style>
+      :root {
+        --bg: #0a0b0e;
+        --panel: #16181d;
+        --accent: #00f2ff;
+        --text: #e0e6ed;
+        --dim: #8892a0;
+        --border: #2d333b;
+        --ok: #00ff88;
+        --warn: #ffaa00;
+        --err: #ff4455;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Inter", system-ui, sans-serif;
+        margin: 0;
+        padding: 20px;
+        line-height: 1.5;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .schedule-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+      .schedule-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        cursor: pointer;
+        transition: 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+      .schedule-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 242, 255, 0.1);
+      }
+      .card-active {
+        border-left: 4px solid var(--ok);
+      }
+      .card-disabled {
+        border-left: 4px solid var(--dim);
+        opacity: 0.7;
+      }
+
+      .card-header {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .card-icon {
+        font-size: 1.4em;
+      }
+      .card-title {
+        font-weight: 700;
+        font-size: 1.1em;
+        color: var(--text);
+      }
+      .card-subtitle {
+        font-size: 0.8em;
+        color: var(--dim);
+      }
+
+      .card-stat-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85em;
+        margin-bottom: 4px;
+        color: var(--dim);
+      }
+      .card-badge {
+        font-size: 0.7em;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2px 8px;
+        border-radius: 10px;
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .modal-content {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        width: 90%;
+        max-width: 500px;
+        padding: 24px;
+      }
+      .editor-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 16px;
+      }
+      .editor-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      label {
+        font-size: 0.8em;
+        font-weight: 600;
+        color: var(--dim);
+      }
+      input,
+      select {
+        background: #000;
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.9em;
+      }
+      .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        background: var(--accent);
+        color: #000;
+      }
+      .btn-secondary {
+        background: var(--border);
+        color: var(--text);
+      }
+      .btn-danger {
+        background: rgba(255, 68, 85, 0.1);
+        color: var(--err);
+        border: 1px solid var(--err);
+      }
+
+      .help-btn {
+        border: none;
+        background: none;
+        color: var(--accent);
+        cursor: help;
+        font-size: 0.9em;
+        padding: 0 4px;
+      }
+      .dbg-id {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+        font-size: 10px;
+        color: #555;
+        opacity: 0.6;
+        pointer-events: none;
+        font-family: monospace;
+        letter-spacing: 0.5px;
+        z-index: 100;
+      }
+
+      /* Utility classes to replace inline styles */
+      .m-0 {
+        margin: 0;
+      }
+      .mt-0 {
+        margin-top: 0;
+      }
+      .mt-24 {
+        margin-top: 24px;
+      }
+      .mt-40 {
+        margin-top: 40px;
+      }
+      .pt-20 {
+        padding-top: 20px;
+      }
+      .w-200 {
+        width: 200px;
+      }
+      .col-span-2 {
+        grid-column: span 2;
+      }
+      .flex-row-sb {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .flex-gap-8 {
+        display: flex;
+        gap: 8px;
+      }
+      .border-top {
+        border-top: 1px solid var(--border);
+      }
+      .text-sm-dim {
+        font-size: 0.8em;
+        color: var(--dim);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div>
+          <span class="dbg-id">SCH-HDR</span>
+          <h2 class="m-0">Universal IO Scheduler</h2>
+          <div id="duty-detail" class="text-sm-dim">System Online</div>
+        </div>
+        <nav style="display: flex; gap: 8px; align-items: center">
+          <a
+            href="/"
+            style="color: #aaa; font-size: 12px; text-decoration: none"
+            >Fleet Admin</a
+          >
+          <a
+            href="/static/mqtt_dashboard.html"
+            style="color: #aaa; font-size: 12px; text-decoration: none"
+            >MQTT</a
+          >
+          <a
+            href="/devqa"
+            style="color: #3b9eff; font-size: 12px; text-decoration: none"
+            >Dev / QA</a
+          >
+        </nav>
+        <button class="btn" onclick="openTaskEditor(-1)">
+          <span class="dbg-id">SCH-BTN-NEW</span>+ New Task
+        </button>
+      </header>
+
+      <div id="schedule-grid" class="schedule-grid">
+        <span class="dbg-id">SCH-GRID</span>
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="mt-40 border-top pt-20 flex-row-sb">
+        <input
+          id="seq-name"
+          type="text"
+          placeholder="Sequence Name"
+          value="Main"
+          class="w-200"
+        />
+        <button class="btn" onclick="saveSequence()">Save to Device</button>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="task-editor-modal" class="modal">
+      <div class="modal-content">
+        <span class="dbg-id">SCH-EDITOR-MODAL</span>
+        <h3 id="editor-title" class="mt-0">Edit Task</h3>
+        <div class="editor-grid">
+          <div class="editor-field col-span-2">
+            <label>Task Name</label>
+            <input id="edit-task-name" type="text" maxlength="16" />
+          </div>
+          <div class="editor-field">
+            <label>Type</label>
+            <select id="edit-task-type" onchange="onEditorTypeChange()">
+              <option value="TOGGLE">Toggle</option>
+              <option value="PULSE">Pulse</option>
+              <option value="PWM">PWM</option>
+              <option value="SERVO">Servo</option>
+              <option value="READ">Read</option>
+              <option value="LORA_TX">LoRa TX</option>
+              <option value="FAILOVER_PING">Failover Ping</option>
+            </select>
+          </div>
+          <div class="editor-field" id="pin-field-group">
+            <label>Pin</label>
+            <input id="edit-task-pin" type="text" />
+          </div>
+          <div class="editor-field">
+            <label>Interval (s)</label>
+            <input id="edit-task-interval" type="number" min="0" />
+          </div>
+          <div class="editor-field" id="duration-field-group">
+            <label>Duration (s)</label>
+            <input id="edit-task-duration" type="number" min="0" />
+          </div>
+        </div>
+        <div class="mt-24 flex-row-sb">
+          <button class="btn btn-danger" onclick="deleteCurrentTask()">
+            Delete
+          </button>
+          <div class="flex-gap-8">
+            <button class="btn btn-secondary" onclick="closeTaskEditor()">
+              Cancel
+            </button>
+            <button class="btn" onclick="saveTaskFromEditor()">Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let _currentSequence = [];
+      let _editingTaskIdx = -1;
+
+      async function loadData() {
+        try {
+          const r = await fetch("/api/sequences");
+          const seqs = await r.json();
+          if (seqs.length) {
+            _currentSequence = seqs[0].tasks || [];
+            document.getElementById("seq-name").value = seqs[0].name;
+            renderGrid();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      function renderGrid() {
+        const grid = document.getElementById("schedule-grid");
+        grid.innerHTML = _currentSequence
+          .map(
+            (t, i) => `
+        <div class="schedule-card card-active" onclick="openTaskEditor(${i})"><span class="dbg-id">SCH-CARD-${i}</span>
+          <div class="card-header">
+            <div class="card-icon">⚙</div>
+            <div class="card-title-group">
+              <div class="card-title">${t.name}</div>
+              <div class="card-subtitle">${t.type} • Pin ${t.pin}</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-stat-row"><span>Interval:</span><span>${t.interval}s</span></div>
+            ${t.duration ? `<div class="card-stat-row"><span>Duration:</span><span>${t.duration}s</span></div>` : ""}
+          </div>
+        </div>
+      `,
+          )
+          .join("");
+      }
+
+      function openTaskEditor(idx) {
+        _editingTaskIdx = idx;
+        const t =
+          idx >= 0
+            ? _currentSequence[idx]
+            : {
+                name: "New",
+                type: "TOGGLE",
+                pin: "5",
+                interval: 30,
+                duration: 0,
+              };
+        document.getElementById("edit-task-name").value = t.name;
+        document.getElementById("edit-task-type").value = t.type;
+        document.getElementById("edit-task-pin").value = t.pin;
+        document.getElementById("edit-task-interval").value = t.interval;
+        document.getElementById("edit-task-duration").value = t.duration || 0;
+        document.getElementById("task-editor-modal").style.display = "flex";
+      }
+
+      function saveTaskFromEditor() {
+        const t = {
+          name: document.getElementById("edit-task-name").value,
+          type: document.getElementById("edit-task-type").value,
+          pin: document.getElementById("edit-task-pin").value,
+          interval: parseInt(
+            document.getElementById("edit-task-interval").value,
+          ),
+          duration: parseInt(
+            document.getElementById("edit-task-duration").value,
+          ),
+        };
+        if (_editingTaskIdx === -1) _currentSequence.push(t);
+        else _currentSequence[_editingTaskIdx] = t;
+        closeTaskEditor();
+        renderGrid();
+      }
+
+      function deleteCurrentTask() {
+        if (_editingTaskIdx >= 0) _currentSequence.splice(_editingTaskIdx, 1);
+        closeTaskEditor();
+        renderGrid();
+      }
+
+      function closeTaskEditor() {
+        document.getElementById("task-editor-modal").style.display = "none";
+      }
+
+      async function saveSequence() {
+        const name = document.getElementById("seq-name").value;
+        const res = await fetch("/api/sequences", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, tasks: _currentSequence }),
+        });
+        if (res.ok) alert("Saved!");
+      }
+
+      function onEditorTypeChange() {
+        const type = document.getElementById("edit-task-type").value;
+        document.getElementById("duration-field-group").style.display =
+          type === "PULSE" || type === "TOGGLE" ? "" : "none";
+      }
+
+      loadData();
+    </script>
+  </body>
+</html>

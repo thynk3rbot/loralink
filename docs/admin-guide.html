@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Guide — LoRaLink Docs</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">›</span>Admin Guide</div>
+    <h1>🛡 Admin Guide</h1>
+    <p>Fleet management, node discovery, deployment profiles, and backup/restore.</p>
+    <p>For details on managing the background services, Docker, and automatic startup, see the <a href="operations.html">System Operations</a> guide.</p>
+
+    <h2>Fleet Management</h2>
+    <p>The PC webapp acts as the fleet administrator, providing a centralized view of all nodes with batch control capabilities.</p>
+    <ul>
+      <li><strong>Node Registry</strong> — Add, connect, and remove devices from the roster</li>
+      <li><strong>Network Discovery</strong> — Scan your subnet for LoRaLink devices</li>
+      <li><strong>BLE Scanning</strong> — Discover nearby Bluetooth devices and pair peers</li>
+    </ul>
+    <!-- TODO: Expand with step-by-step fleet management walkthrough -->
+
+    <h2>Product Profiles &amp; Deployment</h2>
+    <p>Create reusable "product profiles" that define GPIO configurations, schedules, and settings for specific hardware deployments.</p>
+    <!-- TODO: Expand with product profile creation guide -->
+
+    <h2>Golden Image Backup</h2>
+    <p>Back up a device's complete NVS configuration as a JSON "golden image" for cloning to other units.</p>
+    <pre><code># Via the webapp Admin tab:
+# 1. Click "Backup Device NVS"
+# 2. JSON saved to workstation
+# 3. Restore to any compatible hardware</code></pre>
+    <!-- TODO: Expand with restore and hardware validation details -->
+
+    <h2>Config Sync</h2>
+    <ul>
+      <li><strong>Export</strong> — <code>GET /api/config</code> pulls full device config</li>
+      <li><strong>Import</strong> — <code>POST /api/config/apply</code> pushes config with hardware ID validation</li>
+    </ul>
+    <!-- TODO: Expand with schema version and hardware ID details -->
+
+    <h2>Protocol Verification</h2>
+    <p>The Admin tab includes tools to verify protocol health, trace message routing, and analyze link saturation between peers.</p>
+    <!-- TODO: Expand with analysis tool walkthrough -->
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

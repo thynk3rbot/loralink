@@ -1,0 +1,11 @@
+{
+  "_schema": "loralink-product-v1",
+  "name": "Remote Sentry v1",
+  "hw": "Heltec V3",
+  "config_file": "config_remote_sentry.json",
+  "schedule_file": "sched_remote_sentry.json",
+  "version": "1.1",
+  "notes": "Solar-optimized telemetry node for remote field sensing.",
+  "preferred_transport": "ble",
+  "preferred_format": "J"
+}

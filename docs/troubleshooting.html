@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Troubleshooting — LoRaLink Docs</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">›</span>Troubleshooting</div>
+    <h1>Troubleshooting</h1>
+    <p>Common issues and solutions. Click any item to expand.</p>
+
+    <h2>Connectivity</h2>
+
+    <details>
+      <summary>WiFi won't connect or credentials don't persist</summary>
+      <div class="faq-body">
+        <p>Ensure you're using <code>SETWIFI &lt;ssid&gt; &lt;password&gt;</code> via serial or the web dashboard. If credentials don't persist after reboot, this may be a known NVS issue — try <code>WIPECONFIG</code> and reconfigure.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>LoRa messages not received by other nodes</summary>
+      <div class="faq-body">
+        <p>Verify both nodes share the same crypto key and sync word. Check <code>RADIO</code> command output for diagnostics. Ensure antennas are connected — operating without an antenna can damage the SX1262.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>BLE scan returns no devices</summary>
+      <div class="faq-body">
+        <p>BLE scanning requires the Bleak library on the PC. Install with <code>pip install bleak</code>. The scan runs for ~10 seconds in the background — results populate automatically.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Dashboard shows "Device Offline"</summary>
+      <div class="faq-body">
+        <p>Confirm the device is on the same network as your browser. Check the serial output for the device's IP. Try <code>http://&lt;device-ip&gt;/api/status</code> directly.</p>
+      </div>
+    </details>
+
+    <h2>Firmware</h2>
+
+    <details>
+      <summary>Upload fails or times out</summary>
+      <div class="faq-body">
+        <p>Try a different USB cable or port. Press the BOOT button during upload if auto-reset fails. Ensure PlatformIO is targeting the correct board (<code>heltec_wifi_lora_32_V3</code>).</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Device reboots in a loop</summary>
+      <div class="faq-body">
+        <p>This is typically caused by corrupted NVS data from a previous firmware version. Connect via serial and issue <code>WIPECONFIG</code>, or erase flash with <code>pio run -t erase</code>.</p>
+      </div>
+    </details>
+
+    <h2>Hardware</h2>
+
+    <details>
+      <summary>OLED display is blank</summary>
+      <div class="faq-body">
+        <p>The OLED uses I2C. Verify connections and that VExt is enabled. The display initializes during the boot sequence — check serial for I2C errors.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Relay clicks but load doesn't switch</summary>
+      <div class="faq-body">
+        <p>Verify wiring to the relay module. Check that the relay is rated for your load voltage/current. Use a multimeter to confirm GPIO is driving the relay input HIGH.</p>
+      </div>
+    </details>
+
+    <!-- TODO: Add more FAQ entries as issues are discovered -->
+
+    <h2>Debug Commands</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><code>STATUS</code></td><td>Full device snapshot</td></tr>
+        <tr><td><code>RADIO</code></td><td>LoRa hardware diagnostics</td></tr>
+        <tr><td><code>GETSCHED</code></td><td>View scheduler state</td></tr>
+        <tr><td><code>WIPECONFIG</code></td><td>Reset to factory defaults</td></tr>
+      </tbody>
+    </table>
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

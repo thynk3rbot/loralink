@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Multi-Device Swarm — LoRaLink Docs</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="doc-main">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">›</span>Multi-Device Swarm Support</div>
+    <h1>Multi-Device Swarm Operations</h1>
+    <p>Scaling LoRaLink from a single gateway to a network of distributed edge nodes through the Swarm Dashboard.</p>
+
+    <!-- Section 1: Docker Orchestration -->
+    <h2>1. Docker Broker Orchestration (EMQX)</h2>
+    <p>To securely and efficiently route telemetry between multiple devices and the centralized Fleet Administrator, LoRaLink utilizes an external MQTT broker (EMQX). This handles all "System of Systems" transport over WiFi.</p>
+
+    <h3>Deployment Configuration (<code>mqttdocker.yml</code>)</h3>
+    <pre><code>version: '3.8'
+
+services:
+  emqx:
+    image: emqx:latest
+    container_name: loralink_emqx
+    ports:
+      - "1883:1883"     # Standard MQTT routing between nodes
+      - "8083:8083"     # WebSockets - Required for Swarm Dashboard UI
+      - "18083:18083"   # EMQX Internal Admin UI
+    environment:
+      - "EMQX_ALLOW_ANONYMOUS=true"</code></pre>
+    <div class="alert alert-info">
+      <div class="alert-title">🌐 WebSockets Requirement</div>
+      <p>The Swarm WebApp utilizes <strong>Port 8083</strong> exclusively to handle WebSocket encapsulation over HTTP. Ensure this port is open on your host firewall.</p>
+    </div>
+
+    <!-- Section 2: Fleet & Node Configuration -->
+    <h2>2. Node Configuration for Swarm Operations</h2>
+    <p>Before an individual piece of Heltec hardware can connect to the Swarm Dashboard, it must be provisioned with its own unique identity and the address of the MQTT Broker configured in Section 1.</p>
+
+    <h3>NVS Device Setup</h3>
+    <p>You must toggle the following Non-Volatile Storage keys using the Admin interface on each device:</p>
+    <table>
+      <thead><tr><th>Namespace: Key</th><th>Value</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>loralink:wifi_ssid</code></td><td>"YOUR_SSID"</td><td>Local network access.</td></tr>
+        <tr><td><code>loralink:mqtt_en</code></td><td><code>true</code></td><td>Brings up the MQTT client task loop.</td></tr>
+        <tr><td><code>loralink:mqtt_srv</code></td><td>"192.168.1.100"</td><td>The IP Address of your Docker Host running EMQX.</td></tr>
+        <tr><td><code>loralink:dev_name</code></td><td>Node-01</td><td>Unique identifier to prevent reporting collisions.</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Section 3: The Swarm Dashboard Interface -->
+    <h2>3. Operating the Swarm Dashboard</h2>
+    <p>The Swarm Dashboard is an isolated UI module that runs directly off of the WebSockets feed, rendering live telemetry without needing to query individual nodes via REST APIs.</p>
+
+    <h3>Telemetry Reception</h3>
+    <p>Nodes broadcast lightweight JSON heartbeat packets to the <code>loralink/telemetry/{dev_name}</code> topic every 5 minutes (or as defined by <code>sched_int_global</code>). This maintains the dashboard's "Online/Offline" health indicators and tracks battery consumption dynamically.</p>
+
+    <h3>Global Command Injection</h3>
+    <p>Using the Sidebar "Broadcast Console", you can inject commands across the entire LoRa network. For example, broadcasting <code>RESTART</code> publishes the message to <code>loralink/cmd/all</code>, causing all connected edge modules to cleanly reboot.</p>
+
+    <!-- Section 4: Testing & Sync Validation -->
+    <h2>4. Testing Fleet Sync</h2>
+    <p>To validate your multi-device swarm setup is correctly routing and acknowledging data:</p>
+
+    <ol>
+      <li><strong>Boot the Broker:</strong> Run <code>docker-compose -f mqttdocker.yml up -d</code>. Navigate to <code>http://localhost:18083</code> (Admin/public) to confirm EMQX is alive.</li>
+      <li><strong>Boot the Swarm Dashboard:</strong> Open <code>tools/webapp/static/mqtt_dashboard.html</code>. Verify the Connection Status bubble switches to <strong class="text-success">Green (Connected)</strong>.</li>
+      <li><strong>Provision a Node:</strong> Apply WiFi and MQTT settings to a Heltec V3 device. Once the device associates with WiFi, it immediately sends a heartbeat.</li>
+      <li><strong>Verify Appearance:</strong> A card displaying the Node identifier (e.g., <code>Node-01</code>), Battery Level, and RSSI should instantly appear on the dashboard.</li>
+      <li><strong>Ping Test:</strong> Click the "Ping" action on the Node Card. Observe the "Live Swarm Log" on the right sidebar—you should see the Ping command transmit, followed shortly by a <code>[MSG] Pong</code> back from the device.</li>
+    </ol>
+  </main>
+  <script src="js/docs.js"></script>
+</body>
+</html>

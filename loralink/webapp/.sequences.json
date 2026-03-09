@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Test1",
+    "tasks": [
+      {
+        "name": "MASTER",
+        "type": "LORA_TX",
+        "pin": 7,
+        "interval": 30,
+        "duration": 5
+      },
+      {
+        "name": "New",
+        "type": "TOGGLE",
+        "pin": 5,
+        "interval": 30,
+        "duration": 3
+      }
+  },
+  {
+    "name": "Failover_Monitor",
+    "tasks": [
+      {
+        "name": "SLAVE",
+        "type": "FAILOVER_PING",
+        "pin": "LORA",
+        "interval": 60,
+        "duration": 0
+      }
+    ]
+  }
+]

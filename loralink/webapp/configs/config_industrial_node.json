@@ -1,0 +1,34 @@
+{
+  "schema": "1.0",
+  "hardware_id": "Heltec ESP32 LoRa V3",
+  "settings": {
+    "dev_name": "INDUSTRIAL-RELAY",
+    "wifi_ssid": "loralink-mesh",
+    "wifi_pass": "secure88!password",
+    "static_ip": "",
+    "gateway": "",
+    "subnet": "",
+    "repeater": true,
+    "mqtt_en": true,
+    "mqtt_srv": "192.168.1.100",
+    "mqtt_prt": 1883,
+    "mqtt_usr": "admin",
+    "mqtt_pwd": "password",
+    "espnow_en": true,
+    "wifi_en": true,
+    "ble_en": true,
+    "crypto_key": "AABBCCDDEEFF00112233445566778899"
+  },
+  "pins": {
+    "35": { "name": "SYS_LED", "en": true },
+    "6": { "name": "RELAY_CH1", "en": true },
+    "7": { "name": "RELAY_CH2", "en": true },
+    "5": { "name": "RELAY_CH3", "en": true },
+    "15": { "name": "RELAY_CH4", "en": true },
+    "20": { "name": "ISO_INPUT_1", "en": true }
+  },
+  "_comments": {
+    "purpose": "Heavy-duty industrial relay controller with MQTT telemetry",
+    "setup": "Repeater enabled to bridge range gaps in loud RF environments"
+  }
+}

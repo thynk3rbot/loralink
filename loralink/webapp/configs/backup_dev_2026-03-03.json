@@ -1,0 +1,23 @@
+{
+  "schema": "1.0",
+  "hardware_id": "Heltec ESP32 LoRa V3",
+  "settings": {
+    "dev_name": "GW-C4FC",
+    "wifi_ssid": "spw1-5g",
+    "wifi_pass": "OPTMyxlpyx99!",
+    "static_ip": "172.16.0.26",
+    "gateway": "172.16.0.1",
+    "subnet": "255.255.255.0",
+    "repeater": false,
+    "mqtt_en": false,
+    "mqtt_srv": "",
+    "mqtt_prt": 1883,
+    "mqtt_usr": "",
+    "mqtt_pwd": "",
+    "espnow_en": false,
+    "wifi_en": true,
+    "ble_en": true,
+    "crypto_key": ""
+  },
+  "pins": {}
+}
